@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace SudokuNinja
 {
-	public partial class Form1 : Form
+	public partial class MainNinjaForm : Form
 	{
-		public Form1()
+		public MainNinjaForm()
 		{
 			InitializeComponent();
 		}
