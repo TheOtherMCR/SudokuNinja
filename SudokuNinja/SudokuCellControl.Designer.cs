@@ -28,23 +28,35 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.pnlCell = new System.Windows.Forms.Panel();
 			this.SuspendLayout();
+			// 
+			// pnlCell
+			// 
+			this.pnlCell.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.pnlCell.BackColor = System.Drawing.SystemColors.Control;
+			this.pnlCell.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.pnlCell.Location = new System.Drawing.Point(0, 0);
+			this.pnlCell.Name = "pnlCell";
+			this.pnlCell.Size = new System.Drawing.Size(50, 50);
+			this.pnlCell.TabIndex = 0;
+			this.pnlCell.Paint += new System.Windows.Forms.PaintEventHandler(this.pnlCell_Paint);
 			// 
 			// SudokuCellControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackColor = System.Drawing.Color.White;
-			this.MaximumSize = new System.Drawing.Size(48, 48);
+			this.Controls.Add(this.pnlCell);
+			this.MaximumSize = new System.Drawing.Size(50, 50);
 			this.MinimumSize = new System.Drawing.Size(24, 24);
 			this.Name = "SudokuCellControl";
-			this.Size = new System.Drawing.Size(48, 48);
-			this.Load += new System.EventHandler(this.SudokuCellControl_Load);
-			this.SizeChanged += new System.EventHandler(this.SudokuCellControl_SizeChanged);
+			this.Size = new System.Drawing.Size(50, 50);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
+
+		private System.Windows.Forms.Panel pnlCell;
 	}
 }
