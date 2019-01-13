@@ -38,8 +38,10 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.sudokuCellControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.sudokuCellControl.Location = new System.Drawing.Point(12, 12);
+			this.sudokuCellControl.MaximumSize = new System.Drawing.Size(50, 50);
+			this.sudokuCellControl.MinimumSize = new System.Drawing.Size(24, 24);
 			this.sudokuCellControl.Name = "sudokuCellControl";
-			this.sudokuCellControl.Size = new System.Drawing.Size(59, 55);
+			this.sudokuCellControl.Size = new System.Drawing.Size(50, 50);
 			this.sudokuCellControl.TabIndex = 1;
 			// 
 			// MainNinjaForm
@@ -48,6 +50,8 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(298, 152);
 			this.Controls.Add(this.sudokuCellControl);
+			this.HelpButton = true;
+			this.MaximizeBox = false;
 			this.Name = "MainNinjaForm";
 			this.Text = "Sudoku Ninja";
 			this.ResumeLayout(false);
