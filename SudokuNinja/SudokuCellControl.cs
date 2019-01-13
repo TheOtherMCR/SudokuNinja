@@ -60,9 +60,19 @@ namespace SudokuNinja
 			rctMain = pnlCell.ClientRectangle;
 			e.Graphics.FillRectangle(m_bgBrush, rct);
 			m_brMain = Brushes.Black;
-			m_fgFont = new Font("SansSerif", (float)10.0);
-			e.Graphics.DrawString(Assignment.ToString(), Font, m_brMain, rctMain);
+			m_fgFont = new Font("SansSerif", (float)40.0);
+			e.Graphics.DrawString(Assignment.ToString(), m_fgFont, m_brMain, rctMain);
 		}
 
+		/// <summary>
+		/// Handles the SizeChanged event of the SudokuCellControl control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		private void SudokuCellControl_SizeChanged(object sender, EventArgs e)
+		{
+			// We may want to do something here to force the cell to be square.
+			Width = Height;		// Well that was easy.
+		}
 	}
 }

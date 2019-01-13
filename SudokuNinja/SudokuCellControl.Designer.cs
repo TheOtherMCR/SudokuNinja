@@ -51,6 +51,7 @@
 			this.MinimumSize = new System.Drawing.Size(24, 24);
 			this.Name = "SudokuCellControl";
 			this.Size = new System.Drawing.Size(50, 50);
+			this.SizeChanged += new System.EventHandler(this.SudokuCellControl_SizeChanged);
 			this.ResumeLayout(false);
 
 		}
