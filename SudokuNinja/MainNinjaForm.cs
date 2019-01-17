@@ -16,7 +16,13 @@ namespace SudokuNinja
 	{
 		public MainNinjaForm()
 		{
+			SudokuCellControl.ClearCellUpdateCount();
 			InitializeComponent();
+		}
+
+		private void MainNinjaForm_SizeChanged(object sender, System.EventArgs e)
+		{
+			SudokuCellControl.ClearCellUpdateCount();
 		}
 	}
 }

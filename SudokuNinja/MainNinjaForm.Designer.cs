@@ -28,38 +28,23 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.sudokuCellControl = new SudokuNinja.SudokuCellControl();
 			this.SuspendLayout();
-			// 
-			// sudokuCellControl
-			// 
-			this.sudokuCellControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.sudokuCellControl.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.sudokuCellControl.Location = new System.Drawing.Point(12, 12);
-			this.sudokuCellControl.MaximumSize = new System.Drawing.Size(50, 50);
-			this.sudokuCellControl.MinimumSize = new System.Drawing.Size(24, 24);
-			this.sudokuCellControl.Name = "sudokuCellControl";
-			this.sudokuCellControl.Size = new System.Drawing.Size(50, 50);
-			this.sudokuCellControl.TabIndex = 1;
 			// 
 			// MainNinjaForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(298, 152);
-			this.Controls.Add(this.sudokuCellControl);
+			this.ClientSize = new System.Drawing.Size(367, 250);
 			this.HelpButton = true;
 			this.MaximizeBox = false;
 			this.Name = "MainNinjaForm";
 			this.Text = "Sudoku Ninja";
+			this.SizeChanged += new System.EventHandler(this.MainNinjaForm_SizeChanged);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
-		private SudokuCellControl sudokuCellControl;
 	}
 }
 
