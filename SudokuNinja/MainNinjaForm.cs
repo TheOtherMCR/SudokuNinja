@@ -14,15 +14,42 @@ namespace SudokuNinja
 {
 	public partial class MainNinjaForm : Form
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="MainNinjaForm"/> class.
+		/// </summary>
 		public MainNinjaForm()
 		{
-			SudokuCellControl.ClearCellUpdateCount();
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// Handles the Load event of the MainNinjaForm control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void MainNinjaForm_Load(object sender, System.EventArgs e)
+		{
+
+		}
+
+		/// <summary>
+		/// Handles the FormClosing event of the MainNinjaForm control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="FormClosingEventArgs"/> instance containing the event data.</param>
+		private void MainNinjaForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+
+		}
+
+		/// <summary>
+		/// Handles the SizeChanged event of the MainNinjaForm control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		private void MainNinjaForm_SizeChanged(object sender, System.EventArgs e)
 		{
-			SudokuCellControl.ClearCellUpdateCount();
 		}
+
 	}
 }

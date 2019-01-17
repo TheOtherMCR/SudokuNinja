@@ -39,6 +39,8 @@
 			this.MaximizeBox = false;
 			this.Name = "MainNinjaForm";
 			this.Text = "Sudoku Ninja";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainNinjaForm_FormClosing);
+			this.Load += new System.EventHandler(this.MainNinjaForm_Load);
 			this.SizeChanged += new System.EventHandler(this.MainNinjaForm_SizeChanged);
 			this.ResumeLayout(false);
 
