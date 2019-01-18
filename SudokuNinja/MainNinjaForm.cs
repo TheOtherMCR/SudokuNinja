@@ -20,6 +20,16 @@ namespace SudokuNinja
 		public MainNinjaForm()
 		{
 			InitializeComponent();
+
+			sudokuCell1.MainSelection = 1;
+			sudokuCell2.MainSelection = 2;
+			sudokuCell3.MainSelection = 3;
+			sudokuCell4.MainSelection = 4;
+			sudokuCell5.MainSelection = 5;
+			sudokuCell6.MainSelection = 6;
+			sudokuCell7.MainSelection = 7;
+			sudokuCell8.MainSelection = 8;
+			sudokuCell9.MainSelection = 9;
 		}
 
 		/// <summary>
@@ -39,7 +49,6 @@ namespace SudokuNinja
 		/// <param name="e">The <see cref="FormClosingEventArgs"/> instance containing the event data.</param>
 		private void MainNinjaForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-
 		}
 
 		/// <summary>
@@ -49,7 +58,7 @@ namespace SudokuNinja
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		private void MainNinjaForm_SizeChanged(object sender, System.EventArgs e)
 		{
+			SudokuGridControl.SudokuCell.ClearRefreshCount();
 		}
-
 	}
 }
