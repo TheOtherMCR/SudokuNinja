@@ -87,5 +87,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SudokuGridControl\SudokuGridControl.csproj">
+      <Project>{65C6968B-0008-4F3B-BFB6-8202563DA35D}</Project>
+      <Name>SudokuGridControl</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
