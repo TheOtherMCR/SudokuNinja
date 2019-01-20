@@ -35,6 +35,8 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.MaximumSize = new System.Drawing.Size(64, 64);
+			this.MinimumSize = new System.Drawing.Size(16, 16);
 			this.Name = "SudokuCell";
 			this.Size = new System.Drawing.Size(62, 62);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.SudokuCell_Paint);
