@@ -2,3 +2,4 @@ SudokuNinja/bin/*
 SudokuNinja/obj/*
 SudokuGridControl/bin/*
 SudokuGridControl/obj/*
+.vs/*
