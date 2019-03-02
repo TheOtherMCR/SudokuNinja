@@ -37,8 +37,9 @@ namespace SudokuGridControl
 
 		public const int Nine = 9;
 
-		const double c_dMainFontScaleFactor = 0.45;
+		const double c_dMainFontScaleFactor = 0.50;
 		const double c_dSubFontScaleFactor = 0.16;
+		const double c_dMainNumberVerticalPositionPercent = 0.30;
 
 		int m_nCellSN;
 		bool[] m_blSubNumON;
@@ -193,7 +194,8 @@ namespace SudokuGridControl
 				fnt = sm_SelectionFont;
 				sfFont = e.Graphics.MeasureString(str, fnt);
 				fX = ((float)Width - sfFont.Width) / 2;
-				fY = ((float)Height - sfFont.Height) / 2;
+				fY = (float)(Height - sfFont.Height);
+				fY *= (float)(1.0 - c_dMainNumberVerticalPositionPercent);
 
 				SolidBrush brFont = new SolidBrush(ForeColor);
 				e.Graphics.DrawString(str, fnt, brFont, new PointF(fX, fY));
