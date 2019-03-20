@@ -9,20 +9,16 @@
 	There will be 81 of these cells in a grid.
 */
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SudokuGridControl
 {
-    public partial class SudokuCell: UserControl
+	public partial class SudokuCell: UserControl
     {
-
+		/// <summary>
+		/// These static items will be shared by all 81 cells
+		/// </summary>
 		static Rectangle sm_CellRect;
 		static Font sm_SelectionFont;
 		static Font sm_BoldFont;
@@ -41,6 +37,9 @@ namespace SudokuGridControl
 		const double c_dSubFontScaleFactor = 0.16;
 		const double c_dMainNumberVerticalPositionPercent = 0.30;
 
+		bool m_blHovering;
+		Pen m_penHover;
+
 		int m_nCellSN;
 		bool[] m_blSubNumON;
 
@@ -53,10 +52,6 @@ namespace SudokuGridControl
 			sm_nCount++;
 
 			InitializeComponent();
-
-			BackgroundColor = Color.White;
-			MainNumberColour = Color.DarkOliveGreen;
-			SubNumberColor = Color.Gray;
 
 			ClearCell();
         }
@@ -110,6 +105,24 @@ namespace SudokuGridControl
 		/// </summary>
 		/// <value>The color of the sub number.</value>
 		public Color SubNumberColor
+		{
+			set; get;
+		}
+
+		/// <summary>
+		/// Gets or sets the color of the hover highlight.
+		/// </summary>
+		/// <value>The color of the hover highlight.</value>
+		public Color HoverHighlightColor
+		{
+			set; get;
+		}
+
+		/// <summary>
+		/// Gets or sets the color of the hover subnum.
+		/// </summary>
+		/// <value>The color of the hover subnum.</value>
+		public Color HoverSubnumColor
 		{
 			set; get;
 		}
@@ -196,8 +209,11 @@ namespace SudokuGridControl
 				fX = ((float)Width - sfFont.Width) / 2;
 				fY = (float)(Height - sfFont.Height);
 				fY *= (float)(1.0 - c_dMainNumberVerticalPositionPercent);
-
-				SolidBrush brFont = new SolidBrush(ForeColor);
+				SolidBrush brFont;
+				if (m_blHovering == true)
+					brFont = new SolidBrush(HoverHighlightColor);
+				else
+					brFont = new SolidBrush(MainNumberColour);
 				e.Graphics.DrawString(str, fnt, brFont, new PointF(fX, fY));
 			}
 
@@ -214,8 +230,13 @@ namespace SudokuGridControl
 					sm_nSubRectPosIncr = sm_nSubRecWidth;
 				}
 
-				// Paint the background first.
-				SolidBrush brFont = new SolidBrush(SubNumberColor);
+				// Paint the subnumbers.
+				SolidBrush brFont;
+				if (m_blHovering == true)
+					brFont = new SolidBrush(HoverSubnumColor);
+				else
+					brFont = new SolidBrush(SubNumberColor);
+
 				nHPos = sm_nSubRectMargin;
 				nVPos = sm_nSubRectMargin;
 				k = 0;
@@ -231,6 +252,7 @@ namespace SudokuGridControl
 							nHPos = sm_nSubRectMargin + ((k - 4) * sm_nSubRecWidth);
 						}
 						str = (i + 1).ToString();
+
 						e.Graphics.DrawString(str, sm_SubNumFont, brFont, new Point(nHPos, nVPos));
 						k++;
 					}
@@ -248,6 +270,23 @@ namespace SudokuGridControl
 		private void SudokuCell_Resize(object sender, EventArgs e)
 		{
 			Width = Height;
+			Invalidate();
+		}
+
+		/// <summary>
+		/// Handles the MouseHover event of the SudokuCell control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		private void SudokuCell_MouseHover(object sender, EventArgs e)
+		{
+			m_blHovering = true;
+			Invalidate();
+		}
+
+		private void SudokuCell_MouseLeave(object sender, EventArgs e)
+		{
+			m_blHovering = false;
 			Invalidate();
 		}
 	}

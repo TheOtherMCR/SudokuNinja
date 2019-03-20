@@ -40,6 +40,8 @@
 			this.Name = "SudokuCell";
 			this.Size = new System.Drawing.Size(62, 62);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.SudokuCell_Paint);
+			this.MouseLeave += new System.EventHandler(this.SudokuCell_MouseLeave);
+			this.MouseHover += new System.EventHandler(this.SudokuCell_MouseHover);
 			this.Resize += new System.EventHandler(this.SudokuCell_Resize);
 			this.ResumeLayout(false);
 
