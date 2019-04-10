@@ -38,7 +38,6 @@ namespace SudokuGridControl
 		const double c_dMainNumberVerticalPositionPercent = 0.30;
 
 		bool m_blHovering;
-		Pen m_penHover;
 
 		int m_nCellSN;
 		bool[] m_blSubNumON;
@@ -55,6 +54,49 @@ namespace SudokuGridControl
 
 			ClearCell();
         }
+
+		/// <summary>
+		/// Gets the grid row.
+		/// </summary>
+		/// <value>The grid row.</value>
+		public int GridRow
+		{
+			get
+			{
+				return (m_nCellSN / SudokuCell.Nine);
+			}
+		}
+
+		/// <summary>
+		/// Gets the grid column.
+		/// </summary>
+		/// <value>The grid column.</value>
+		public int GridColumn
+		{
+			get
+			{
+				return (m_nCellSN % SudokuCell.Nine);
+			}
+		}
+
+		/// <summary>
+		/// Gets the grid sub number.
+		/// </summary>
+		/// <value>The grid sub number.</value>
+		public int GridSubNum
+		{
+			get
+			{
+				int nSG;
+				if (GridRow < 3)
+					nSG = GridColumn / 3;
+				else if (GridRow < 6)
+					nSG = GridColumn / 3 + 3;
+				else
+					nSG = GridColumn / 3 + 6;
+				return nSG;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the main selection.
