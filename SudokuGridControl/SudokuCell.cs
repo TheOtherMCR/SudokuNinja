@@ -56,49 +56,6 @@ namespace SudokuGridControl
         }
 
 		/// <summary>
-		/// Gets the grid row.
-		/// </summary>
-		/// <value>The grid row.</value>
-		public int GridRow
-		{
-			get
-			{
-				return (m_nCellSN / SudokuCell.Nine);
-			}
-		}
-
-		/// <summary>
-		/// Gets the grid column.
-		/// </summary>
-		/// <value>The grid column.</value>
-		public int GridColumn
-		{
-			get
-			{
-				return (m_nCellSN % SudokuCell.Nine);
-			}
-		}
-
-		/// <summary>
-		/// Gets the grid sub number.
-		/// </summary>
-		/// <value>The grid sub number.</value>
-		public int GridSubNum
-		{
-			get
-			{
-				int nSG;
-				if (GridRow < 3)
-					nSG = GridColumn / 3;
-				else if (GridRow < 6)
-					nSG = GridColumn / 3 + 3;
-				else
-					nSG = GridColumn / 3 + 6;
-				return nSG;
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets the main selection.
 		/// </summary>
 		/// <value>The main selection.</value>
@@ -237,6 +194,7 @@ namespace SudokuGridControl
 			// Paint the background first.
 			SolidBrush br = new SolidBrush(BackgroundColor);
 			e.Graphics.FillRectangle(br, sm_CellRect);
+			e.Graphics.DrawRectangle(Pens.Black, sm_CellRect);
 
 			// Paint the number into the cell unless it is blank (0)
 			if (MainSelection > 0)

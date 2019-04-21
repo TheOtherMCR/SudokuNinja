@@ -16,8 +16,6 @@ namespace SudokuNinja
 {
 	public partial class MainNinjaForm : Form
 	{
-		SudokuCell[] arrCells;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MainNinjaForm"/> class.
 		/// </summary>
@@ -45,14 +43,5 @@ namespace SudokuNinja
 		{
 		}
 
-		/// <summary>
-		/// Handles the SizeChanged event of the MainNinjaForm control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void MainNinjaForm_SizeChanged(object sender, System.EventArgs e)
-		{
-			SudokuGridControl.SudokuCell.ClearRefreshCount();
-		}
 	}
 }
