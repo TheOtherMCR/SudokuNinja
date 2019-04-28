@@ -36,7 +36,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.Black;
 			this.Name = "SudokuStandardGrid";
-			this.Size = new System.Drawing.Size(289, 276);
+			this.Size = new System.Drawing.Size(300, 300);
 			this.Load += new System.EventHandler(this.SudokuStandardGrid_Load);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.SudokuStandardGrid_Paint);
 			this.Resize += new System.EventHandler(this.SudokuStandardGrid_Resize);

@@ -66,7 +66,7 @@ namespace SudokuGridControl
 
 		Panel[] subgridPanel = new Panel[SudokuCell.Nine];
 		SudokuCell[] sudCell = new SudokuCell[SudokuCell.Nine * SudokuCell.Nine];
-
+		StandardCellData[] m_cellData = new StandardCellData[SudokuCell.Nine * SudokuCell.Nine];
 		int m_nSubgridWidth;
 		int m_nSubgridHeight;
 		int m_nCellWidth;
@@ -96,9 +96,9 @@ namespace SudokuGridControl
 					sudCell[k] = new SudokuCell();
 					sudCell[k].BackgroundColor = Color.White;
 					sudCell[k].BorderStyle = BorderStyle.None;
-					sudCell[k].HoverHighlightColor = Color.Red;
-					sudCell[k].HoverSubnumColor = Color.DarkMagenta;
-					sudCell[k].MainNumberColour = Color.Black;
+					sudCell[k].HoverOutlineColor = Color.Red;
+					sudCell[k].HoverSubNumberColor = Color.DarkMagenta;
+					sudCell[k].MainNumberColor = Color.Black;
 					sudCell[k].MaximumSize = new Size(64, 64);
 					sudCell[k].MinimumSize = new Size(16, 16);
 					sudCell[k].ShowPossible = false;
@@ -109,7 +109,10 @@ namespace SudokuGridControl
 			// Now assign all of the cells to their subgrids:
 			for (i = 0; i < c_nNumCellsTotal; i++)
 			{
-				j = GetCellSubgrid(i);
+				// Initialize the cell data and attached it to the cell:
+				m_cellData[i] = new StandardCellData(i);
+				sudCell[i].AttachCellData(m_cellData[i]);
+				j = m_cellData[i].Subgrid;
 				subgridPanel[j].Controls.Add(sudCell[i]);
 			}
 		}
@@ -121,66 +124,19 @@ namespace SudokuGridControl
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		private void SudokuStandardGrid_Load(object sender, System.EventArgs e)
 		{
+			// We want to determine the overall width of the control here:
+			int nWidth;
+			nWidth = Width;
+			nWidth -= 2 * (c_nOuterBorderWidth + c_nInnerSubgridSpacing);
+			nWidth -= 6 * c_nInnerCellSpacing;
+			nWidth /= SudokuCell.Nine;
+			nWidth *= SudokuCell.Nine;
+			nWidth += 6 * c_nInnerCellSpacing;
+			nWidth += 2 * (c_nOuterBorderWidth + c_nInnerSubgridSpacing);
+			Width = nWidth;
+			Height = Width;
 		}
 
-		/// <summary>
-		/// Gets the cell row.
-		/// </summary>
-		/// <param name="nFullIndex">Full index of the cell.</param>
-		/// <returns>System.Int32.</returns>
-		public int GetCellRow(int nFullIndex)
-		{
-			return (nFullIndex / SudokuCell.Nine);
-		}
-
-		/// <summary>
-		/// Gets the cell column.
-		/// </summary>
-		/// <param name="nFullIndex">Full index of the cell.</param>
-		/// <returns>System.Int32.</returns>
-		public int GetCellColumn(int nFullIndex)
-		{
-			return (nFullIndex % SudokuCell.Nine);
-		}
-
-		/// <summary>
-		/// Gets the cell subgrid.
-		/// </summary>
-		/// <param name="nFullIndex">Full index of the cell.</param>
-		/// <returns>System.Int32.</returns>
-		public int GetCellSubgrid(int nFullIndex)
-		{
-			int nSG, row, col;
-			row = GetCellRow(nFullIndex);
-			col = GetCellColumn(nFullIndex);
-			if (row < 3)
-				nSG = col / 3;
-			else if (row < 6)
-				nSG = col / 3 + 3;
-			else
-				nSG = col / 3 + 6;
-			return nSG;
-		}
-
-		/// <summary>
-		/// Gets the cell subgrid row, which can be 0 to 2.
-		/// </summary>
-		/// <param name="nFullIndex">Full index of the n.</param>
-		/// <returns>System.Int32.</returns>
-		public int GetCellSubgridRow(int nFullIndex)
-		{
-			return GetCellRow(nFullIndex) % 3;
-		}
-
-		/// <summary>
-		/// Gets the cell subgrid column.
-		/// </summary>
-		/// <param name="nFullIndex">Full index of the n.</param>
-		/// <returns>System.Int32.</returns>
-		public int GetCellSubgridColumn(int nFullIndex)
-		{
-			return GetCellColumn(nFullIndex) % 3;
-		}
 
 		/// <summary>
 		/// Handles the Paint event of the SudokuStandardGrid control.
@@ -221,13 +177,13 @@ namespace SudokuGridControl
 		private void PlaceCell(int nCellIndex)
 		{
 			SudokuCell sc;
-			int nX, nY, row, col;
+			StandardCellData scd;
+			int nX, nY;
 			sc = sudCell[nCellIndex];
+			scd = sc.CellData as StandardCellData;
 			sc.Size = new Size(m_nCellWidth, m_nCellHeight);
-			row = GetCellSubgridRow(nCellIndex);
-			col = GetCellSubgridColumn(nCellIndex);
-			nX = col * (c_nInnerCellSpacing + m_nCellWidth);
-			nY = row * (c_nInnerCellSpacing + m_nCellHeight);
+			nX = scd.SubgridColumn * (c_nInnerCellSpacing + m_nCellWidth);
+			nY = scd.SubgridRow * (c_nInnerCellSpacing + m_nCellHeight);
 			sc.Location = new Point(nX, nY);
 		}
 
@@ -261,7 +217,6 @@ namespace SudokuGridControl
 			{
 				PlaceCell(i);
 			}
-
 			ResumeLayout();
 		}
 
@@ -272,23 +227,6 @@ namespace SudokuGridControl
 		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
 		private void SudokuStandardGrid_Resize(object sender, System.EventArgs e)
 		{
-			// We want to ensure that the new size of the control
-			// provides for clean integer sized results. 
-			// We might make an adjustment to the size:
-			int Ws1, Ws2, n, W1, W2;
-			// This is the new subgrid size;
-			Ws1 = (int)((Width - 2 * (c_nOuterBorderWidth + c_nInnerSubgridSpacing)) / 3);
-			// Ws = n * 3 + 2 * c_nInnerCellSpacing
-			n = (int)((Ws1 - 2 * c_nInnerCellSpacing) / 3);
-			Ws1 = n * 3 + 2 * c_nInnerCellSpacing;
-			W1 = 3 * Ws1 + 2 * (c_nOuterBorderWidth + c_nInnerSubgridSpacing);
-			n++;
-			Ws2 = n * 3 + 2 * c_nInnerCellSpacing;
-			W2 = 3 * Ws2 + 2 * (c_nOuterBorderWidth + c_nInnerSubgridSpacing);
-			if ((Width - W1) < (W2 - Width))
-				Width = Height = W1;
-			else
-				Width = Height = W2;
 			Invalidate();
 		}
 	}

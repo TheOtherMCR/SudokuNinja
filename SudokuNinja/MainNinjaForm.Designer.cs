@@ -28,36 +28,37 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.sudokuStandardGrid1 = new SudokuGridControl.SudokuStandardGrid();
+			this.sudokuStandardGrid = new SudokuGridControl.SudokuStandardGrid();
 			this.SuspendLayout();
 			// 
-			// sudokuStandardGrid1
+			// sudokuStandardGrid
 			// 
-			this.sudokuStandardGrid1.BackColor = System.Drawing.Color.Black;
-			this.sudokuStandardGrid1.Location = new System.Drawing.Point(13, 13);
-			this.sudokuStandardGrid1.Name = "sudokuStandardGrid1";
-			this.sudokuStandardGrid1.Size = new System.Drawing.Size(393, 393);
-			this.sudokuStandardGrid1.TabIndex = 0;
+			this.sudokuStandardGrid.BackColor = System.Drawing.Color.Black;
+			this.sudokuStandardGrid.Location = new System.Drawing.Point(13, 13);
+			this.sudokuStandardGrid.Name = "sudokuStandardGrid";
+			this.sudokuStandardGrid.Size = new System.Drawing.Size(394, 394);
+			this.sudokuStandardGrid.TabIndex = 0;
 			// 
 			// MainNinjaForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(481, 427);
-			this.Controls.Add(this.sudokuStandardGrid1);
+			this.Controls.Add(this.sudokuStandardGrid);
 			this.HelpButton = true;
 			this.MaximizeBox = false;
 			this.Name = "MainNinjaForm";
 			this.Text = "Sudoku Ninja";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainNinjaForm_FormClosing);
 			this.Load += new System.EventHandler(this.MainNinjaForm_Load);
+			this.Resize += new System.EventHandler(this.MainNinjaForm_Resize);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private SudokuGridControl.SudokuStandardGrid sudokuStandardGrid1;
+		private SudokuGridControl.SudokuStandardGrid sudokuStandardGrid;
 	}
 }
 

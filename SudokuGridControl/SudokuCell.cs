@@ -42,6 +42,9 @@ namespace SudokuGridControl
 		int m_nCellSN;
 		bool[] m_blSubNumON;
 
+		// Will be assigned to the cell at initialization
+		SudokuCellData cellData;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SudokuCell"/> class.
 		/// </summary>
@@ -54,6 +57,24 @@ namespace SudokuGridControl
 
 			ClearCell();
         }
+
+		/// <summary>
+		/// Attachs the cell data.
+		/// </summary>
+		/// <param name="scd">The SCD.</param>
+		public void AttachCellData(SudokuCellData scd)
+		{
+			cellData = scd;
+		}
+
+		/// <summary>
+		/// Gets the cell data.
+		/// </summary>
+		/// <value>The cell data.</value>
+		public SudokuCellData CellData
+		{
+			get { return cellData; }
+		}
 
 		/// <summary>
 		/// Gets or sets the main selection.
@@ -91,10 +112,10 @@ namespace SudokuGridControl
 		}
 
 		/// <summary>
-		/// Gets or sets the main number colour.
+		/// Gets or sets the main number color.
 		/// </summary>
-		/// <value>The main number colour.</value>
-		public Color MainNumberColour
+		/// <value>The main number color.</value>
+		public Color MainNumberColor
 		{
 			set; get;
 		}
@@ -109,19 +130,34 @@ namespace SudokuGridControl
 		}
 
 		/// <summary>
-		/// Gets or sets the color of the hover highlight.
+		/// Gets or sets the color of the outline.
 		/// </summary>
-		/// <value>The color of the hover highlight.</value>
-		public Color HoverHighlightColor
+		/// <value>The color of the outline.</value>
+		public Color OutlineColor
 		{
 			set; get;
 		}
 
 		/// <summary>
-		/// Gets or sets the color of the hover subnum.
+		/// Gets or sets the color of the hover outline.
 		/// </summary>
-		/// <value>The color of the hover subnum.</value>
-		public Color HoverSubnumColor
+		/// <value>The color of the hover outline.</value>
+		public Color HoverOutlineColor
+		{
+			set; get;
+		}
+
+		/// <summary></summary>
+		public Color HoverFontColor
+		{
+			set; get;
+		}
+
+		/// <summary>
+		/// Gets or sets the color of the hover sub number.
+		/// </summary>
+		/// <value>The color of the hover sub number.</value>
+		public Color HoverSubNumberColor
 		{
 			set; get;
 		}
@@ -193,8 +229,18 @@ namespace SudokuGridControl
 
 			// Paint the background first.
 			SolidBrush br = new SolidBrush(BackgroundColor);
-			e.Graphics.FillRectangle(br, sm_CellRect);
-			e.Graphics.DrawRectangle(Pens.Black, sm_CellRect);
+			if (m_blHovering == true)
+			{
+				Brush brHover = new SolidBrush(HoverOutlineColor);
+				Rectangle rct = new Rectangle(sm_CellRect.Location, sm_CellRect.Size);
+				e.Graphics.FillRectangle(brHover, rct);
+				rct.Inflate(-3, -3);
+				e.Graphics.FillRectangle(br, rct);
+			}
+			else
+			{
+				e.Graphics.FillRectangle(br, sm_CellRect);
+			}
 
 			// Paint the number into the cell unless it is blank (0)
 			if (MainSelection > 0)
@@ -211,9 +257,9 @@ namespace SudokuGridControl
 				fY *= (float)(1.0 - c_dMainNumberVerticalPositionPercent);
 				SolidBrush brFont;
 				if (m_blHovering == true)
-					brFont = new SolidBrush(HoverHighlightColor);
+					brFont = new SolidBrush(HoverFontColor);
 				else
-					brFont = new SolidBrush(MainNumberColour);
+					brFont = new SolidBrush(MainNumberColor);
 				e.Graphics.DrawString(str, fnt, brFont, new PointF(fX, fY));
 			}
 
@@ -233,7 +279,7 @@ namespace SudokuGridControl
 				// Paint the subnumbers.
 				SolidBrush brFont;
 				if (m_blHovering == true)
-					brFont = new SolidBrush(HoverSubnumColor);
+					brFont = new SolidBrush(HoverSubNumberColor);
 				else
 					brFont = new SolidBrush(SubNumberColor);
 
