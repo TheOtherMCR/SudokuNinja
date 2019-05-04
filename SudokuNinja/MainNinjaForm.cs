@@ -51,5 +51,17 @@ namespace SudokuNinja
 		private void MainNinjaForm_Resize(object sender, EventArgs e)
 		{
 		}
+
+		#region Puzzle Setup
+		/// <summary>
+		/// Handles the Click event of the setPuzzleToolStripMenuItem control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		private void setPuzzleToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			sudokuStandardGrid.SetGridMode(GridMode.GM_SetPuzzle);
+		}
+		#endregion
 	}
 }

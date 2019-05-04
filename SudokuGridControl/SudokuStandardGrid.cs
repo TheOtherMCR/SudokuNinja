@@ -36,6 +36,15 @@ using System.Windows.Forms;
 namespace SudokuGridControl
 {
 	/// <summary>
+	/// Enum GridMode
+	/// </summary>
+	public enum GridMode
+	{
+		GM_Idle,
+		GM_SetPuzzle
+	};
+
+	/// <summary>
 	/// Class SudokuStandardGrid.
 	/// </summary>
 	/// <seealso cref="System.Windows.Forms.UserControl" />
@@ -65,12 +74,15 @@ namespace SudokuGridControl
 		// satisfy: Ws = n * 3 + 2 * c_nInnerCellSpacing
 
 		Panel[] subgridPanel = new Panel[SudokuCell.Nine];
-		SudokuCell[] sudCell = new SudokuCell[SudokuCell.Nine * SudokuCell.Nine];
-		StandardCellData[] m_cellData = new StandardCellData[SudokuCell.Nine * SudokuCell.Nine];
+		SudokuCell[] sudCell = new SudokuCell[SudokuCell.NineByNine];
+		StandardCellData[] m_cellData = new StandardCellData[SudokuCell.NineByNine];
 		int m_nSubgridWidth;
 		int m_nSubgridHeight;
 		int m_nCellWidth;
 		int m_nCellHeight;
+
+		protected GridMode m_gridMode;
+		protected int m_nSelectedCell;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SudokuStandardGrid"/> class.
@@ -115,7 +127,49 @@ namespace SudokuGridControl
 				j = m_cellData[i].Subgrid;
 				subgridPanel[j].Controls.Add(sudCell[i]);
 			}
+
+			m_gridMode = GridMode.GM_Idle;
+			m_nSelectedCell = -1;
 		}
+
+		#region Color Sets
+		[System.ComponentModel.Browsable(true),
+		System.ComponentModel.Category("Appearance"),
+		System.ComponentModel.Description("Color for Frame Highlight in Setup Mode."),
+		System.ComponentModel.DefaultValue(true)]
+		public Color PuzzleSetupFrameHighlight { get; set; }
+
+		[System.ComponentModel.Browsable(true),
+		System.ComponentModel.Category("Appearance"),
+		System.ComponentModel.Description("Color for Backgroung in Setup Mode."),
+		System.ComponentModel.DefaultValue(true)]
+		public Color PuzzleSetupBackground { get; set; }
+
+		[System.ComponentModel.Browsable(true),
+		System.ComponentModel.Category("Appearance"),
+		System.ComponentModel.Description("Color for Font in Setup Mode."),
+		System.ComponentModel.DefaultValue(true)]
+		public Color PuzzleSetupFontColor { get; set; }
+
+		[System.ComponentModel.Browsable(true),
+		System.ComponentModel.Category("Appearance"),
+		System.ComponentModel.Description("Color for Frame Highlight in Idle Mode."),
+		System.ComponentModel.DefaultValue(true)]
+		public Color IdleFrameHighlight { get; set; }
+
+		[System.ComponentModel.Browsable(true),
+		System.ComponentModel.Category("Appearance"),
+		System.ComponentModel.Description("Color for Backgroung in Idle Mode."),
+		System.ComponentModel.DefaultValue(true)]
+		public Color IdleBackground { get; set; }
+
+		[System.ComponentModel.Browsable(true),
+		System.ComponentModel.Category("Appearance"),
+		System.ComponentModel.Description("Color for Font in Idle Mode."),
+		System.ComponentModel.DefaultValue(true)]
+		public Color IdleFontColor { get; set; }
+
+		#endregion
 
 		/// <summary>
 		/// Handles the Load event of the SudokuStandardGrid control.
@@ -229,5 +283,90 @@ namespace SudokuGridControl
 		{
 			Invalidate();
 		}
+
+		#region Grid Modes
+
+		/// <summary>
+		/// Sets the grid mode.
+		/// </summary>
+		/// <param name="gm">The gm.</param>
+		public void SetGridMode(GridMode gm)
+		{
+			m_gridMode = gm;
+			// Reset all the cells to Idle
+			InitiateGridMode(GridMode.GM_Idle, true);
+			InitiateGridMode(gm, false);
+			ChangeSelectedCell(0);
+		}
+
+		/// <summary>
+		/// Initiates the grid mode.
+		/// </summary>
+		/// <param name="gm">The gm.</param>
+		private void InitiateGridMode(GridMode gm, bool blClearAll)
+		{
+			int i;
+			switch (gm)
+			{
+				case GridMode.GM_SetPuzzle:
+					for (i = 0; i < SudokuCell.NineByNine; i++)
+					{
+						sudCell[i].ShowPossible = false;
+						if (blClearAll == true)
+							sudCell[i].MainSelection = 0;
+					}
+					break;
+
+				default:
+					for (i = 0; i < SudokuCell.NineByNine; i++)
+					{
+						sudCell[i].OutlineColor = IdleFrameHighlight;
+						sudCell[i].BackgroundColor = IdleBackground;
+						sudCell[i].MainNumberColor = IdleFontColor;
+						sudCell[i].FrameOn = false;
+						if (blClearAll == true)
+							sudCell[i].MainSelection = 0;
+					}
+					m_nSelectedCell = -1;
+					break;
+			}
+
+		}
+
+		/// <summary>
+		/// Changes the selected cell.
+		/// </summary>
+		/// <param name="nNewSel">The n new sel.</param>
+		private void ChangeSelectedCell(int nNewSel)
+		{
+			switch (m_gridMode)
+			{
+				case GridMode.GM_SetPuzzle:
+					if (m_nSelectedCell >= 0 && m_nSelectedCell <= SudokuCell.NineByNine)
+					{
+						sudCell[m_nSelectedCell].OutlineColor = IdleFrameHighlight;
+						sudCell[m_nSelectedCell].BackgroundColor = IdleBackground;
+						sudCell[m_nSelectedCell].MainNumberColor = IdleFontColor;
+						sudCell[m_nSelectedCell].FrameOn = false;
+					}
+					if (nNewSel >= 0 && nNewSel <= SudokuCell.NineByNine)
+					{
+						m_nSelectedCell = nNewSel;
+						sudCell[m_nSelectedCell].OutlineColor = PuzzleSetupFrameHighlight;
+						sudCell[m_nSelectedCell].BackgroundColor = PuzzleSetupBackground;
+						sudCell[m_nSelectedCell].MainNumberColor = PuzzleSetupFontColor;
+						sudCell[m_nSelectedCell].FrameOn = true;
+					}
+					Invalidate(true);
+					break;
+
+				default:
+					break;
+			}
+
+		}
+
+		#endregion
+
 	}
 }

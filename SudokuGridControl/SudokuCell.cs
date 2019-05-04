@@ -32,6 +32,7 @@ namespace SudokuGridControl
 		static int sm_nSubRectPosIncr;
 
 		public const int Nine = 9;
+		public const int NineByNine = 81;
 
 		const double c_dMainFontScaleFactor = 0.50;
 		const double c_dSubFontScaleFactor = 0.16;
@@ -98,6 +99,15 @@ namespace SudokuGridControl
 		System.ComponentModel.Description("Specify visible possible selections."),
 		System.ComponentModel.DefaultValue(true)]
 		public bool ShowPossible
+		{
+			get; set;
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether [frame on].
+		/// </summary>
+		/// <value><c>true</c> if [frame on]; otherwise, <c>false</c>.</value>
+		public bool FrameOn
 		{
 			get; set;
 		}
@@ -171,6 +181,7 @@ namespace SudokuGridControl
 			m_blSubNumON = new bool[Nine];
 			for (i = 0; i < Nine; i++)
 				m_blSubNumON[i] = false;
+			FrameOn = false;
 		}
 
 		/// <summary>
@@ -229,11 +240,11 @@ namespace SudokuGridControl
 
 			// Paint the background first.
 			SolidBrush br = new SolidBrush(BackgroundColor);
-			if (m_blHovering == true)
+			if (m_blHovering == true || FrameOn == true)
 			{
-				Brush brHover = new SolidBrush(HoverOutlineColor);
+				Brush brOutline = new SolidBrush(FrameOn == true ? OutlineColor : HoverOutlineColor);
 				Rectangle rct = new Rectangle(sm_CellRect.Location, sm_CellRect.Size);
-				e.Graphics.FillRectangle(brHover, rct);
+				e.Graphics.FillRectangle(brOutline, rct);
 				rct.Inflate(-3, -3);
 				e.Graphics.FillRectangle(br, rct);
 			}
