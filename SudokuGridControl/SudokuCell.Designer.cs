@@ -39,7 +39,9 @@
 			this.MinimumSize = new System.Drawing.Size(16, 16);
 			this.Name = "SudokuCell";
 			this.Size = new System.Drawing.Size(64, 64);
+			this.Click += new System.EventHandler(this.SudokuCell_Click);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.SudokuCell_Paint);
+			this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.SudokuCell_KeyPress);
 			this.MouseLeave += new System.EventHandler(this.SudokuCell_MouseLeave);
 			this.MouseHover += new System.EventHandler(this.SudokuCell_MouseHover);
 			this.Resize += new System.EventHandler(this.SudokuCell_Resize);

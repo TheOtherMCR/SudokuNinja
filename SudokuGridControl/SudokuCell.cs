@@ -14,6 +14,15 @@ using System.Windows.Forms;
 
 namespace SudokuGridControl
 {
+	public enum KeyHandling
+	{
+		KH_Blank,
+		KH_One, KH_Two, KH_Three, KH_Four, KH_Five,
+		KH_Six, KH_Seven, KH_Eight, KH_Nine, 
+		KH_Up, KH_Down, KH_Left, KH_Right, 
+		KH_Escape, KH_Clicked, KH_Null
+	}
+
 	public partial class SudokuCell: UserControl
     {
 		/// <summary>
@@ -46,6 +55,8 @@ namespace SudokuGridControl
 		// Will be assigned to the cell at initialization
 		SudokuCellData cellData;
 
+		SudokuStandardGrid.CellKeyEvent TellGridAboutKeyEvent;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SudokuCell"/> class.
 		/// </summary>
@@ -58,6 +69,15 @@ namespace SudokuGridControl
 
 			ClearCell();
         }
+
+		/// <summary>
+		/// Sets the grid key handler.
+		/// </summary>
+		/// <param name="cke">The cke.</param>
+		public void SetGridKeyHandler(SudokuStandardGrid.CellKeyEvent cke)
+		{
+			TellGridAboutKeyEvent = cke;
+		}
 
 		/// <summary>
 		/// Attachs the cell data.
@@ -330,6 +350,7 @@ namespace SudokuGridControl
 			Invalidate();
 		}
 
+		#region Mouse Control
 		/// <summary>
 		/// Handles the MouseHover event of the SudokuCell control.
 		/// </summary>
@@ -341,10 +362,92 @@ namespace SudokuGridControl
 			Invalidate();
 		}
 
+		/// <summary>
+		/// Handles the MouseLeave event of the SudokuCell control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
 		private void SudokuCell_MouseLeave(object sender, EventArgs e)
 		{
 			m_blHovering = false;
 			Invalidate();
 		}
+
+		/// <summary>
+		/// Handles the Click event of the SudokuCell control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+		private void SudokuCell_Click(object sender, EventArgs e)
+		{
+			TellGridAboutKeyEvent(KeyHandling.KH_Clicked, m_nCellSN);
+		}
+
+		#endregion
+
+		#region Keyboard Handling
+
+		/// <summary>
+		/// Processes a command key.
+		/// </summary>
+		/// <param name="msg">A <see cref="T:System.Windows.Forms.Message" />, passed by reference, that represents the window message to process.</param>
+		/// <param name="keyData">One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process.</param>
+		/// <returns><see langword="true" /> if the character was processed by the control; otherwise, <see langword="false" />.</returns>
+		protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+		{
+			KeyHandling kh;
+			switch (keyData)
+			{
+				case Keys.Up:
+					kh = KeyHandling.KH_Up;
+					break;
+				case Keys.Down:
+					kh = KeyHandling.KH_Down;
+					break;
+				case Keys.Left:
+					kh = KeyHandling.KH_Left;
+					break;
+				case Keys.Right:
+					kh = KeyHandling.KH_Right;
+					break;
+				case Keys.Escape:
+					kh = KeyHandling.KH_Escape;
+					break;
+				default:
+					kh = KeyHandling.KH_Null;
+					break;
+			}
+			if (kh != KeyHandling.KH_Null)
+			{
+				TellGridAboutKeyEvent(kh, m_nCellSN);
+				return true;
+			}
+			else
+				return base.ProcessCmdKey(ref msg, keyData);
+		}
+
+		/// <summary>
+		/// Handles the KeyPress event of the SudokuCell control.
+		/// It will assigned a "KayHandling" value to the key and
+		/// send it up to the parent grid via the delegate.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="KeyPressEventArgs"/> instance containing the event data.</param>
+		private void SudokuCell_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			if (e.KeyChar >= '1' && e.KeyChar <= '9')
+			{
+				KeyHandling kh = (KeyHandling)(e.KeyChar - '0');
+				TellGridAboutKeyEvent(kh, m_nCellSN);
+			}
+			else if (e.KeyChar == ' ' || e.KeyChar == '0')
+			{
+				KeyHandling kh = KeyHandling.KH_Blank;
+				TellGridAboutKeyEvent(kh, m_nCellSN);
+			}
+		}
+
+		#endregion
+
 	}
 }

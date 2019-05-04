@@ -85,11 +85,20 @@ namespace SudokuGridControl
 		protected int m_nSelectedCell;
 
 		/// <summary>
+		/// Delegate CellKeyEvent
+		/// </summary>
+		/// <param name="khEvent">The kh event.</param>
+		/// <param name="nCell">The n cell.</param>
+		public delegate void CellKeyEvent(KeyHandling khEvent, int nCell);
+		CellKeyEvent CallMeOnKey;
+
+		/// <summary>
 		/// Initializes a new instance of the <see cref="SudokuStandardGrid"/> class.
 		/// </summary>
 		public SudokuStandardGrid()
 		{
 			InitializeComponent();
+			CallMeOnKey = new CellKeyEvent(KeyboardEvent);
 
 			int i, j, k;
 
@@ -116,6 +125,7 @@ namespace SudokuGridControl
 					sudCell[k].ShowPossible = false;
 					sudCell[k].SubNumberColor = Color.DarkGray;
 					sudCell[k].Name = "cell" + k.ToString();
+					sudCell[k].SetGridKeyHandler(CallMeOnKey);
 				}
 			}
 			// Now assign all of the cells to their subgrids:
@@ -295,8 +305,12 @@ namespace SudokuGridControl
 			m_gridMode = gm;
 			// Reset all the cells to Idle
 			InitiateGridMode(GridMode.GM_Idle, true);
-			InitiateGridMode(gm, false);
-			ChangeSelectedCell(0);
+			if (gm != GridMode.GM_Idle)
+			{
+				InitiateGridMode(gm, false);
+				ChangeSelectedCell(0);
+			}
+			Invalidate(true);
 		}
 
 		/// <summary>
@@ -327,7 +341,7 @@ namespace SudokuGridControl
 						if (blClearAll == true)
 							sudCell[i].MainSelection = 0;
 					}
-					m_nSelectedCell = -1;
+					m_nSelectedCell = 0;
 					break;
 			}
 
@@ -339,15 +353,17 @@ namespace SudokuGridControl
 		/// <param name="nNewSel">The n new sel.</param>
 		private void ChangeSelectedCell(int nNewSel)
 		{
+			int nOldCell = m_nSelectedCell;
 			switch (m_gridMode)
 			{
 				case GridMode.GM_SetPuzzle:
-					if (m_nSelectedCell >= 0 && m_nSelectedCell <= SudokuCell.NineByNine)
+					if (nOldCell >= 0 && nOldCell <= SudokuCell.NineByNine)
 					{
-						sudCell[m_nSelectedCell].OutlineColor = IdleFrameHighlight;
-						sudCell[m_nSelectedCell].BackgroundColor = IdleBackground;
-						sudCell[m_nSelectedCell].MainNumberColor = IdleFontColor;
-						sudCell[m_nSelectedCell].FrameOn = false;
+						sudCell[nOldCell].OutlineColor = IdleFrameHighlight;
+						sudCell[nOldCell].BackgroundColor = IdleBackground;
+						sudCell[nOldCell].MainNumberColor = IdleFontColor;
+						sudCell[nOldCell].FrameOn = false;
+						sudCell[nOldCell].Invalidate();
 					}
 					if (nNewSel >= 0 && nNewSel <= SudokuCell.NineByNine)
 					{
@@ -356,14 +372,64 @@ namespace SudokuGridControl
 						sudCell[m_nSelectedCell].BackgroundColor = PuzzleSetupBackground;
 						sudCell[m_nSelectedCell].MainNumberColor = PuzzleSetupFontColor;
 						sudCell[m_nSelectedCell].FrameOn = true;
+						sudCell[m_nSelectedCell].Invalidate();
 					}
-					Invalidate(true);
 					break;
 
 				default:
 					break;
 			}
+		}
+		#endregion
 
+		#region Keyboard Control
+
+		/// <summary>
+		/// Keyboard events that are relevant are given a simple code
+		/// and are routed here for handling along with the cell
+		/// number that generated them.
+		/// </summary>
+		/// <param name="kh">The KeyHandling code.</param>
+		/// <param name="nCellNum">The cell number.</param>
+		protected void KeyboardEvent(KeyHandling kh, int nCellNum)
+		{
+			int nUpdateCode = 0, nNewCell;
+
+			// What action is taken depends on the Grid Mode:
+			if (m_gridMode == GridMode.GM_SetPuzzle)
+			{
+				switch (kh)
+				{
+					case KeyHandling.KH_Escape:
+						SetGridMode(GridMode.GM_Idle);
+						nUpdateCode = 1;	// Update the cell
+						break;
+					case KeyHandling.KH_Up:
+						nNewCell = m_nSelectedCell - ((m_nSelectedCell > 8) ? 9 : 0);
+						ChangeSelectedCell(nNewCell);
+						break;
+					case KeyHandling.KH_Down:
+						nNewCell = m_nSelectedCell + ((m_nSelectedCell < 72) ? 9 : 0);
+						ChangeSelectedCell(nNewCell);
+						break;
+					case KeyHandling.KH_Left:
+						nNewCell = m_nSelectedCell - ((m_nSelectedCell % 9) > 0 ? 1 : 0);
+						ChangeSelectedCell(nNewCell);
+						break;
+					case KeyHandling.KH_Right:
+						nNewCell = m_nSelectedCell + ((m_nSelectedCell % 9) == 8 ? 0 : 1);
+						ChangeSelectedCell(nNewCell);
+						break;
+					case KeyHandling.KH_Clicked:
+						ChangeSelectedCell(nCellNum);
+						break;
+				}
+
+				if (nUpdateCode == 1)
+					sudCell[m_nSelectedCell].Invalidate();
+				else if (nUpdateCode == 2)
+					Invalidate(true);
+			}
 		}
 
 		#endregion
