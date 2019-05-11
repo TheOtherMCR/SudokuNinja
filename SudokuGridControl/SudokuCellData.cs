@@ -34,9 +34,6 @@ namespace SudokuGridControl
 		// This is the overall cell index number.
 		protected int m_nCellIndex;
 
-		// If a value, 1 - 9, has been established, it is stored
-		// here. Otherwise it is 0.
-		int m_nValue;
 		// Each cell will maintain an array or 9 boolean values, each
 		// representing the "not" elimination status for number 1 - 9.
 		// Example:
@@ -46,7 +43,12 @@ namespace SudokuGridControl
 		//  for that cell. 
 		bool[] m_arrNotEliminated = new bool[SudokuCell.Nine];
 
+		/*
 		CellStatus cellStatus;
+
+		// If a value, 1 - 9, has been established, it is stored
+		// here. Otherwise it is 0.
+		int m_nValue;
 
 		// Each time a cell is solved or guessed, it will be
 		// assigned an "order" indicating the order in which
@@ -57,16 +59,19 @@ namespace SudokuGridControl
 		// possible back-tracking one or more times, this value
 		// tracks the branch number.
 		int m_nBranchOrder;
+		*/
 
 		public SudokuCellData()
 		{
 			int i;
-			m_nValue = 0;
 			for (i = 0; i < SudokuCell.Nine; i++)
 				m_arrNotEliminated[i] = false;
+			/*
+			m_nValue = 0;
 			cellStatus = CellStatus.CS_Unsolved;
 			m_nSolvedOrder = 0;
 			m_nBranchOrder = 0;
+			*/
 		}
 
 		/// <summary>

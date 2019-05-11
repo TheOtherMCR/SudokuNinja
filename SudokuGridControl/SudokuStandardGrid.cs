@@ -50,13 +50,17 @@ namespace SudokuGridControl
 	/// <seealso cref="System.Windows.Forms.UserControl" />
 	public partial class SudokuStandardGrid : UserControl
 	{
+		const int c_nNumSubgrids = SudokuCell.Nine;
+		const int c_nNumCellsPerSubgid = SudokuCell.Nine;
+		const int c_nNumCellsTotal = c_nNumSubgrids * c_nNumCellsPerSubgid;
+
 		const int c_nOuterBorderWidth = 3;
 		const int c_nInnerSubgridSpacing = 3;
 		const int c_nInnerCellSpacing = 1;
 
-		const int c_nNumSubgrids = SudokuCell.Nine;
-		const int c_nNumCellsPerSubgid = SudokuCell.Nine;
-		const int c_nNumCellsTotal = c_nNumSubgrids * c_nNumCellsPerSubgid;
+		const double c_dMainFontScaleFactor = 0.55;
+		const double c_dSubFontScaleFactor = 0.16;
+		const double c_dMainNumberVerticalPositionPercent = 0.30;
 
 		// Calculation of allowed overall control widths:
 		// We want all of the cells to be the same width, Wc and
@@ -76,10 +80,17 @@ namespace SudokuGridControl
 		Panel[] subgridPanel = new Panel[SudokuCell.Nine];
 		SudokuCell[] sudCell = new SudokuCell[SudokuCell.NineByNine];
 		StandardCellData[] m_cellData = new StandardCellData[SudokuCell.NineByNine];
-		int m_nSubgridWidth;
+		PopupNumberPanel m_popup;
+
 		int m_nSubgridHeight;
+		int m_nSubgridWidth;
 		int m_nCellWidth;
 		int m_nCellHeight;
+
+		Rectangle m_CellRect;
+		Font m_SelectionFont;
+		Font m_BoldFont;
+		Font m_SubNumFont;
 
 		protected GridMode m_gridMode;
 		protected int m_nSelectedCell;
@@ -114,7 +125,7 @@ namespace SudokuGridControl
 				for (j = 0; j < c_nNumCellsPerSubgid; j++)
 				{
 					k = SudokuCell.Nine * i + j;
-					sudCell[k] = new SudokuCell();
+					sudCell[k] = new SudokuCell(k);
 					sudCell[k].BackgroundColor = Color.White;
 					sudCell[k].BorderStyle = BorderStyle.None;
 					sudCell[k].HoverOutlineColor = Color.Red;
@@ -140,6 +151,8 @@ namespace SudokuGridControl
 
 			m_gridMode = GridMode.GM_Idle;
 			m_nSelectedCell = -1;
+			m_popup = new PopupNumberPanel();
+			m_popup.StartPosition = FormStartPosition.Manual;
 		}
 
 		#region Color Sets
@@ -201,6 +214,15 @@ namespace SudokuGridControl
 			Height = Width;
 		}
 
+		/// <summary>
+		/// Handles the Resize event of the SudokuStandardGrid control.
+		/// </summary>
+		/// <param name="sender">The source of the event.</param>
+		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
+		private void SudokuStandardGrid_Resize(object sender, System.EventArgs e)
+		{
+			Invalidate();
+		}
 
 		/// <summary>
 		/// Handles the Paint event of the SudokuStandardGrid control.
@@ -210,6 +232,47 @@ namespace SudokuGridControl
 		private void SudokuStandardGrid_Paint(object sender, PaintEventArgs e)
 		{
 			LayoutAll();
+		}
+
+		/// <summary>
+		/// Layouts all.
+		/// </summary>
+		private void LayoutAll()
+		{
+			int i;
+			SuspendLayout();
+			RecalcSizes();
+			for (i = 0; i < c_nNumSubgrids; i++)
+			{
+				PlaceSubgrid(ref subgridPanel[i], i);
+			}
+			for (i = 0; i < c_nNumCellsTotal; i++)
+			{
+				PlaceCell(i);
+			}
+			ResumeLayout();
+		}
+
+		/// <summary>
+		/// Recalculates the sizes.
+		/// </summary>
+		private void RecalcSizes()
+		{
+			int nFntSize;
+			m_nSubgridWidth = (Width - 2 * (c_nInnerSubgridSpacing + c_nOuterBorderWidth)) / 3;
+			m_nSubgridHeight = m_nSubgridWidth;
+
+			m_nCellWidth = (m_nSubgridWidth - 2 * c_nInnerCellSpacing) / 3;
+			m_nCellHeight = m_nCellWidth;
+
+			m_CellRect = new Rectangle(0, 0, m_nCellWidth, m_nCellHeight);
+
+			// All cells use the same font.
+			nFntSize = (int)(m_nCellHeight * c_dMainFontScaleFactor);
+			m_SelectionFont = new Font("Arial", nFntSize);
+			m_BoldFont = new Font(m_SelectionFont, FontStyle.Bold);
+			nFntSize = (int)(m_nCellHeight * c_dSubFontScaleFactor);
+			m_SubNumFont = new Font("Arial", nFntSize);
 		}
 
 		/// <summary>
@@ -246,52 +309,11 @@ namespace SudokuGridControl
 			sc = sudCell[nCellIndex];
 			scd = sc.CellData as StandardCellData;
 			sc.Size = new Size(m_nCellWidth, m_nCellHeight);
+			sc.SetCellMetrics(ref m_SelectionFont, ref m_BoldFont, ref m_SubNumFont, 
+								ref m_CellRect, c_dMainNumberVerticalPositionPercent);
 			nX = scd.SubgridColumn * (c_nInnerCellSpacing + m_nCellWidth);
 			nY = scd.SubgridRow * (c_nInnerCellSpacing + m_nCellHeight);
 			sc.Location = new Point(nX, nY);
-		}
-
-		/// <summary>
-		/// Recalculates the sizes.
-		/// </summary>
-		private void RecalcSizes()
-		{
-			m_nSubgridWidth = Width - 2 * (c_nOuterBorderWidth + c_nInnerSubgridSpacing);
-			m_nSubgridWidth /= 3;
-			m_nSubgridHeight = Height - 2 * (c_nOuterBorderWidth + c_nInnerSubgridSpacing);
-			m_nSubgridHeight /= 3;
-
-			m_nCellWidth = (m_nSubgridWidth - 2 * c_nInnerCellSpacing) / 3;
-			m_nCellHeight = (m_nSubgridHeight - 2 * c_nInnerCellSpacing) / 3;
-		}
-
-		/// <summary>
-		/// Layouts all.
-		/// </summary>
-		private void LayoutAll()
-		{
-			int i;
-			SuspendLayout();
-			RecalcSizes();
-			for (i = 0; i < c_nNumSubgrids; i++)
-			{
-				PlaceSubgrid(ref subgridPanel[i], i);
-			}
-			for (i = 0; i < c_nNumCellsTotal; i++)
-			{
-				PlaceCell(i);
-			}
-			ResumeLayout();
-		}
-
-		/// <summary>
-		/// Handles the Resize event of the SudokuStandardGrid control.
-		/// </summary>
-		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="System.EventArgs"/> instance containing the event data.</param>
-		private void SudokuStandardGrid_Resize(object sender, System.EventArgs e)
-		{
-			Invalidate();
 		}
 
 		#region Grid Modes
@@ -394,6 +416,7 @@ namespace SudokuGridControl
 		protected void KeyboardEvent(KeyHandling kh, int nCellNum)
 		{
 			int nUpdateCode = 0, nNewCell;
+			int nOldCell = m_nSelectedCell;
 
 			// What action is taken depends on the Grid Mode:
 			if (m_gridMode == GridMode.GM_SetPuzzle)
@@ -417,18 +440,48 @@ namespace SudokuGridControl
 						ChangeSelectedCell(nNewCell);
 						break;
 					case KeyHandling.KH_Right:
-						nNewCell = m_nSelectedCell + ((m_nSelectedCell % 9) == 8 ? 0 : 1);
+						nNewCell = m_nSelectedCell + ((m_nSelectedCell % 9) < 8 ? 1 : 0);
 						ChangeSelectedCell(nNewCell);
 						break;
-					case KeyHandling.KH_Clicked:
+					case KeyHandling.KH_LClick:
 						ChangeSelectedCell(nCellNum);
+						break;
+					case KeyHandling.KH_RClick:
+						LaunchSelectorPopup(nCellNum);
 						break;
 				}
 
 				if (nUpdateCode == 1)
+				{
+					sudCell[nOldCell].Invalidate();
 					sudCell[m_nSelectedCell].Invalidate();
+				}
 				else if (nUpdateCode == 2)
 					Invalidate(true);
+			}
+		}
+
+		/// <summary>
+		/// Launches the selector popup.
+		/// </summary>
+		/// <param name="nCellNum">The n cell number.</param>
+		protected void LaunchSelectorPopup(int nCellNum)
+		{
+			int x, y;
+			Panel pnl = sudCell[nCellNum].Parent as Panel;
+			x = sudCell[nCellNum].Location.X;
+			x += pnl.Location.X;
+			y = sudCell[nCellNum].Location.Y;
+			y += pnl.Location.Y;
+			Point pt = PointToScreen(new Point(x, y));
+			m_popup.Left = pt.X;
+			m_popup.Top = pt.Y;
+			m_popup.ShowDialog();
+			if (m_popup.ReturnCode > 0 && m_popup.ReturnCode <= 9)
+			{
+				sudCell[nCellNum].MainSelection = m_popup.ReturnCode;
+				sudCell[nCellNum].Invalidate();
+
 			}
 		}
 

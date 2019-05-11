@@ -20,32 +20,24 @@ namespace SudokuGridControl
 		KH_One, KH_Two, KH_Three, KH_Four, KH_Five,
 		KH_Six, KH_Seven, KH_Eight, KH_Nine, 
 		KH_Up, KH_Down, KH_Left, KH_Right, 
-		KH_Escape, KH_Clicked, KH_Null
+		KH_Escape, KH_LClick, KH_RClick, KH_Null
 	}
 
 	public partial class SudokuCell: UserControl
     {
-		/// <summary>
-		/// These static items will be shared by all 81 cells
-		/// </summary>
-		static Rectangle sm_CellRect;
-		static Font sm_SelectionFont;
-		static Font sm_BoldFont;
-		static Font sm_SubNumFont;
-		static int sm_nCount = 0;
-		static int sm_nRefreshCount = 0;
-
-		static int sm_nSubRectMargin;
-		static int sm_nSubRecWidth;
-		static int sm_nSubRectBot;
-		static int sm_nSubRectPosIncr;
-
 		public const int Nine = 9;
 		public const int NineByNine = 81;
 
-		const double c_dMainFontScaleFactor = 0.50;
-		const double c_dSubFontScaleFactor = 0.16;
-		const double c_dMainNumberVerticalPositionPercent = 0.30;
+		/// <summary>
+		/// These items will be the same for all cells in a grid
+		/// so they will be calculated once from the outside and then
+		/// assigned to each cell.
+		/// </summary>
+		Rectangle m_CellRect;
+		Font m_SelectionFont;
+		Font m_BoldFont;
+		Font m_SubNumFont;
+		double m_dMainNumberScaling;
 
 		bool m_blHovering;
 
@@ -60,10 +52,9 @@ namespace SudokuGridControl
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SudokuCell"/> class.
 		/// </summary>
-		public SudokuCell()
+		public SudokuCell(int nSN)
         {
-			m_nCellSN = sm_nCount;
-			sm_nCount++;
+			m_nCellSN = nSN;
 
 			InitializeComponent();
 
@@ -95,6 +86,24 @@ namespace SudokuGridControl
 		public SudokuCellData CellData
 		{
 			get { return cellData; }
+		}
+
+		/// <summary>
+		/// Sets the cell metrics.
+		/// </summary>
+		/// <param name="MainFont">The main font.</param>
+		/// <param name="BoldFont">The bold font.</param>
+		/// <param name="SubFont">The sub font.</param>
+		/// <param name="rctCell">The RCT cell.</param>
+		public void SetCellMetrics(ref Font MainFont, ref Font BoldFont, 
+									ref Font SubFont, ref Rectangle rctCell,
+									double dMainScaling)
+		{
+			m_SelectionFont = MainFont;
+			m_BoldFont = BoldFont;
+			m_SubNumFont = SubFont;
+			m_CellRect = rctCell;
+			m_dMainNumberScaling = dMainScaling;
 		}
 
 		/// <summary>
@@ -205,14 +214,6 @@ namespace SudokuGridControl
 		}
 
 		/// <summary>
-		/// Clears the refresh count.
-		/// </summary>
-		public static void ClearRefreshCount()
-		{
-			sm_nRefreshCount = 0;
-		}
-
-		/// <summary>
 		/// Sets the state of the sub-number.
 		/// </summary>
 		/// <param name="nNum">Indicates the sub-number.</param>
@@ -240,72 +241,49 @@ namespace SudokuGridControl
 		/// <param name="e">The <see cref="PaintEventArgs"/> instance containing the event data.</param>
 		private void SudokuCell_Paint(object sender, PaintEventArgs e)
 		{
-			if (sm_nRefreshCount == 0)
-			{
-				// All of the items in here can be calculated once
-				// for all cells present on the form.
-				// They will share the results.
-				int nFntSize;
-
-				// Get the rectangle representing all cells.
-				sm_CellRect = new Rectangle(new Point(0, 0), Size);
-
-				// All cells use the same font.
-				nFntSize = (int)(Size.Height * c_dMainFontScaleFactor);
-				sm_SelectionFont = new Font("Arial", nFntSize);
-				sm_BoldFont = new Font(sm_SelectionFont, FontStyle.Bold);
-				nFntSize = (int)(Size.Height * c_dSubFontScaleFactor);
-				sm_SubNumFont = new Font("Arial", nFntSize);
-			}
-
 			// Paint the background first.
 			SolidBrush br = new SolidBrush(BackgroundColor);
 			if (m_blHovering == true || FrameOn == true)
 			{
 				Brush brOutline = new SolidBrush(FrameOn == true ? OutlineColor : HoverOutlineColor);
-				Rectangle rct = new Rectangle(sm_CellRect.Location, sm_CellRect.Size);
+				Rectangle rct = new Rectangle(m_CellRect.Location, m_CellRect.Size);
 				e.Graphics.FillRectangle(brOutline, rct);
 				rct.Inflate(-3, -3);
 				e.Graphics.FillRectangle(br, rct);
 			}
 			else
 			{
-				e.Graphics.FillRectangle(br, sm_CellRect);
+				e.Graphics.FillRectangle(br, m_CellRect);
 			}
 
 			// Paint the number into the cell unless it is blank (0)
 			if (MainSelection > 0)
 			{
-				Font fnt;
 				SizeF sfFont;
 				float fX, fY;
 				string str;
 				str = MainSelection.ToString();
-				fnt = sm_SelectionFont;
-				sfFont = e.Graphics.MeasureString(str, fnt);
+				sfFont = e.Graphics.MeasureString(str, m_SelectionFont);
 				fX = ((float)Width - sfFont.Width) / 2;
 				fY = (float)(Height - sfFont.Height);
-				fY *= (float)(1.0 - c_dMainNumberVerticalPositionPercent);
+				fY *= (float)(1.0 - m_dMainNumberScaling);
 				SolidBrush brFont;
 				if (m_blHovering == true)
 					brFont = new SolidBrush(HoverFontColor);
 				else
 					brFont = new SolidBrush(MainNumberColor);
-				e.Graphics.DrawString(str, fnt, brFont, new PointF(fX, fY));
+				e.Graphics.DrawString(str, m_SelectionFont, brFont, new PointF(fX, fY));
 			}
 
 			if (ShowPossible == true)
 			{
 				string str;
 				int i, nHPos, k, nVPos;
-				// Pre-calculate the static factors:
-				if (sm_nRefreshCount == 0)
-				{
-					sm_nSubRectMargin = 1;
-					sm_nSubRecWidth = (int)((double)Width / 4 + 0.5);
-					sm_nSubRectBot = Height - sm_nSubRecWidth - sm_nSubRectMargin;
-					sm_nSubRectPosIncr = sm_nSubRecWidth;
-				}
+				int nSubRectMargin, nSubRecWidth, nSubRectBot;
+
+				nSubRectMargin = 1;
+				nSubRecWidth = (int)((double)Width / 4 + 0.5);
+				nSubRectBot = Height - nSubRecWidth - nSubRectMargin;
 
 				// Paint the subnumbers.
 				SolidBrush brFont;
@@ -314,29 +292,27 @@ namespace SudokuGridControl
 				else
 					brFont = new SolidBrush(SubNumberColor);
 
-				nHPos = sm_nSubRectMargin;
-				nVPos = sm_nSubRectMargin;
+				nHPos = nSubRectMargin;
+				nVPos = nSubRectMargin;
 				k = 0;
 				for (i = 0; i < Nine; i++)
 				{
 					if (m_blSubNumON[i] == true)
 					{
 						if (k < 4)
-							nHPos = sm_nSubRectMargin + k * sm_nSubRecWidth;
+							nHPos = nSubRectMargin + k * nSubRecWidth;
 						else if (k >= 4)
 						{
-							nVPos = sm_nSubRectBot;
-							nHPos = sm_nSubRectMargin + ((k - 4) * sm_nSubRecWidth);
+							nVPos = nSubRectBot;
+							nHPos = nSubRectMargin + ((k - 4) * nSubRecWidth);
 						}
 						str = (i + 1).ToString();
 
-						e.Graphics.DrawString(str, sm_SubNumFont, brFont, new Point(nHPos, nVPos));
+						e.Graphics.DrawString(str, m_SubNumFont, brFont, new Point(nHPos, nVPos));
 						k++;
 					}
 				}
 			}
-
-			sm_nRefreshCount++;
 		}
 
 		/// <summary>
@@ -374,13 +350,16 @@ namespace SudokuGridControl
 		}
 
 		/// <summary>
-		/// Handles the Click event of the SudokuCell control.
+		/// Handles the MouseClick event of the SudokuCell control.
 		/// </summary>
 		/// <param name="sender">The source of the event.</param>
-		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-		private void SudokuCell_Click(object sender, EventArgs e)
+		/// <param name="e">The <see cref="MouseEventArgs"/> instance containing the event data.</param>
+		private void SudokuCell_MouseClick(object sender, MouseEventArgs e)
 		{
-			TellGridAboutKeyEvent(KeyHandling.KH_Clicked, m_nCellSN);
+			if (e.Button == MouseButtons.Right)
+				TellGridAboutKeyEvent(KeyHandling.KH_RClick, m_nCellSN);
+			else if (e.Button == MouseButtons.Left)
+				TellGridAboutKeyEvent(KeyHandling.KH_LClick, m_nCellSN);
 		}
 
 		#endregion
@@ -412,6 +391,9 @@ namespace SudokuGridControl
 					break;
 				case Keys.Escape:
 					kh = KeyHandling.KH_Escape;
+					break;
+				case Keys.PageDown:
+					kh = KeyHandling.KH_RClick;
 					break;
 				default:
 					kh = KeyHandling.KH_Null;
