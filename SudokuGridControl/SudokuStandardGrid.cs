@@ -348,6 +348,7 @@ namespace SudokuGridControl
 					for (i = 0; i < SudokuCell.NineByNine; i++)
 					{
 						sudCell[i].ShowPossible = false;
+						sudCell[i].HoverHighlightOn = false;
 						if (blClearAll == true)
 							sudCell[i].MainSelection = 0;
 					}
@@ -477,11 +478,10 @@ namespace SudokuGridControl
 			m_popup.Left = pt.X;
 			m_popup.Top = pt.Y;
 			m_popup.ShowDialog();
-			if (m_popup.ReturnCode > 0 && m_popup.ReturnCode <= 9)
+			if (m_popup.ReturnCode >= 0 && m_popup.ReturnCode <= 9)
 			{
 				sudCell[nCellNum].MainSelection = m_popup.ReturnCode;
 				sudCell[nCellNum].Invalidate();
-
 			}
 		}
 

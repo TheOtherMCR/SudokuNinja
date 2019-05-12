@@ -9,20 +9,25 @@
 	Grid Control and other menus and controls.
 */
 using System;
+using System.Runtime.Serialization.Json;
 using System.Windows.Forms;
+using System.IO;
 using SudokuGridControl;
 
 namespace SudokuNinja
 {
 	public partial class MainNinjaForm : Form
 	{
+		const string c_strSavedPuzzles = "SavedPuzzles.json";
+		protected SavedPuzzle m_Puzzle;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="MainNinjaForm"/> class.
 		/// </summary>
 		public MainNinjaForm()
 		{
 			InitializeComponent();
-
+			m_Puzzle = new SavedPuzzle();
 		}
 
 		/// <summary>
@@ -62,6 +67,20 @@ namespace SudokuNinja
 		{
 			sudokuStandardGrid.SetGridMode(GridMode.GM_SetPuzzle);
 		}
+		private void btnSave_Click(object sender, EventArgs e)
+		{
+			m_Puzzle.PuzzleName = "Tooronto Star - May 12";
+			m_Puzzle.CreationDate = DateTime.Now;
+			m_Puzzle.LastModifiedDate = DateTime.Now;
+			m_Puzzle.LastModifiedDate.AddMinutes(457);
+
+			DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(SavedPuzzle));
+			FileStream myStream;
+			myStream = File.Create(c_strSavedPuzzles);
+			js.WriteObject(myStream, m_Puzzle);
+			myStream.Close();
+		}
 		#endregion
+
 	}
 }

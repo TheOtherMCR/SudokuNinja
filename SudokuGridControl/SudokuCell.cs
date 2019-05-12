@@ -141,6 +141,11 @@ namespace SudokuGridControl
 			get; set;
 		}
 
+		public bool HoverHighlightOn
+		{
+			get; set;
+		}
+
 		/// <summary>
 		/// Gets or sets the color of the background.
 		/// </summary>
@@ -243,7 +248,7 @@ namespace SudokuGridControl
 		{
 			// Paint the background first.
 			SolidBrush br = new SolidBrush(BackgroundColor);
-			if (m_blHovering == true || FrameOn == true)
+			if ((m_blHovering == true && HoverHighlightOn == true) || FrameOn == true)
 			{
 				Brush brOutline = new SolidBrush(FrameOn == true ? OutlineColor : HoverOutlineColor);
 				Rectangle rct = new Rectangle(m_CellRect.Location, m_CellRect.Size);
@@ -268,7 +273,7 @@ namespace SudokuGridControl
 				fY = (float)(Height - sfFont.Height);
 				fY *= (float)(1.0 - m_dMainNumberScaling);
 				SolidBrush brFont;
-				if (m_blHovering == true)
+				if (m_blHovering == true && HoverHighlightOn == true)
 					brFont = new SolidBrush(HoverFontColor);
 				else
 					brFont = new SolidBrush(MainNumberColor);

@@ -180,5 +180,11 @@ namespace SudokuGridControl
 			m_nReturnCode = -1;
 			Close();
 		}
+
+		private void btnClear_Click(object sender, EventArgs e)
+		{
+			m_nReturnCode = 0;
+			Close();
+		}
 	}
 }
