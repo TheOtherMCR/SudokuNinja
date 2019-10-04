@@ -115,6 +115,8 @@ namespace SudokuGridControl
 				arrCells[i].SetGridKeyHandler(HandlePopupKey);
 
 				arrCells[i].FrameOn = false;
+				SudokuCellData scd = new SudokuCellData();
+				arrCells[i].AttachCellData(scd);
 				arrCells[i].MainSelection = i + 1;
 				arrCells[i].MaximumSize = new Size(64, 64);
 				arrCells[i].MinimumSize = new Size(16, 16);

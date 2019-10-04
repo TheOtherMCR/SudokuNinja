@@ -155,6 +155,16 @@ namespace SudokuGridControl
 			m_popup.StartPosition = FormStartPosition.Manual;
 		}
 
+		public void CopyAllCellData(out StandardCellData[] sdc)
+		{
+			int i;
+			sdc = new StandardCellData[SudokuCell.NineByNine];
+			for (i = 0; i < SudokuCell.NineByNine; i++)
+			{
+				sdc[i] = new StandardCellData(m_cellData[i]);
+			}
+		}
+
 		#region Color Sets
 		[System.ComponentModel.Browsable(true),
 		System.ComponentModel.Category("Appearance"),

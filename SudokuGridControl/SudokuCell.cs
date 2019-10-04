@@ -116,7 +116,14 @@ namespace SudokuGridControl
 		System.ComponentModel.DefaultValue(0)]
 		public int MainSelection
 		{
-			get; set;
+			get
+			{
+				return CellData.Asgmt;
+			}
+			set
+			{
+				CellData.Asgmt = value;
+			}
 		}
 
 		/// <summary>

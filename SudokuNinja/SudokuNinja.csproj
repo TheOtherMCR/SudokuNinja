@@ -52,7 +52,6 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="JSonWriter.cs" />
     <Compile Include="MainNinjaForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -60,8 +59,9 @@
       <DependentUpon>MainNinjaForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
+    <Compile Include="ProgramAttributesTmplt.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SavedPuzzle.cs" />
+    <Compile Include="PuzzleCollection.cs" />
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>

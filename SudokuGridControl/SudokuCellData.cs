@@ -9,10 +9,9 @@
 		current state.
 */
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace SudokuGridControl
 {
@@ -29,6 +28,7 @@ namespace SudokuGridControl
 	/// This is the base class that will represent all 
 	/// Sudoku formats.
 	/// </summary>
+	[Serializable]
 	public class SudokuCellData
 	{
 		// This is the overall cell index number.
@@ -37,51 +37,84 @@ namespace SudokuGridControl
 		// Each cell will maintain an array or 9 boolean values, each
 		// representing the "not" elimination status for number 1 - 9.
 		// Example:
-		//	If m_arrNotEliminated[4] == true, this means that the 
-		//  the number 5 COULD go in this cell (it has NOT been eliminated).
-		//  If the value is false, 5 has been eliminated as a candidate
-		//  for that cell. 
-		bool[] m_arrNotEliminated = new bool[SudokuCell.Nine];
+		//	If Eliminated[4] == true, this means that the 
+		//  the number 5 has been eliminated as a candidate in this cell.
+		//  If the value is true, 5 has not been eliminated as a candidate
+		//  for that cell. To "solve" a cell, one should be able to eliminate
+		//  8 of the 9 values that could go there, leaving only one.
+		protected bool[] Eliminated = new bool[SudokuCell.Nine];
 
-		/*
-		CellStatus cellStatus;
+		protected CellStatus cellStatus;
 
 		// If a value, 1 - 9, has been established, it is stored
 		// here. Otherwise it is 0.
-		int m_nValue;
+		protected int m_nValue;
 
 		// Each time a cell is solved or guessed, it will be
 		// assigned an "order" indicating the order in which
 		// this cell was determined. It's used in back-tracking.
-		int m_nSolvedOrder;
+		protected int m_nSolvedOrder;
 
-		// If the puzzled is difficult and requires guessing and
+		// If the puzzle is difficult and requires guessing and
 		// possible back-tracking one or more times, this value
 		// tracks the branch number.
-		int m_nBranchOrder;
-		*/
-
-		public SudokuCellData()
-		{
-			int i;
-			for (i = 0; i < SudokuCell.Nine; i++)
-				m_arrNotEliminated[i] = false;
-			/*
-			m_nValue = 0;
-			cellStatus = CellStatus.CS_Unsolved;
-			m_nSolvedOrder = 0;
-			m_nBranchOrder = 0;
-			*/
-		}
+		// For example, if we have determined that there are still
+		// 3 possible values that could go in a cell, we always start
+		// with the lowest value number. Let's say the numbers are 2, 5 and 8.
+		// If "m_nBranchOrder" is 0, no branching has been attempted.
+		// If it is = 1, we have tried the lowest (2).
+		// If it is = 2, we have tried 5
+		protected int m_nBranchOrder;
 
 		/// <summary>
 		/// Gets or sets the index of the cell.
 		/// </summary>
 		/// <value>The index of the cell.</value>
-		public int CellIndex
+		[XmlElement]
+		public int Index
 		{
 			get { return m_nCellIndex; }
 			set { m_nCellIndex = value; }
+		}
+
+		[XmlElement]
+		public CellStatus Stat
+		{
+			get { return cellStatus; }
+			set { cellStatus = value; }
+		}
+
+		[XmlElement]
+		public int Asgmt
+		{
+			get { return m_nValue; }
+			set { m_nValue = value; }
+		}
+
+		[XmlElement]
+		public int SlvOr
+		{
+			get { return m_nSolvedOrder; }
+			set { m_nSolvedOrder = value; }
+		}
+
+		[XmlElement]
+		public int BrchOr
+		{
+			get { return m_nBranchOrder; }
+			set { m_nBranchOrder = value; }
+		}
+
+		public SudokuCellData()
+		{
+			int i;
+			for (i = 0; i < SudokuCell.Nine; i++)
+				Eliminated[i] = false;
+
+			m_nValue = 0;
+			cellStatus = CellStatus.CS_Unsolved;
+			m_nSolvedOrder = -1; 
+			m_nBranchOrder = -1;
 		}
 	}
 
@@ -91,11 +124,38 @@ namespace SudokuGridControl
 	/// "standard" Sudoku format with 9 rows, 9 columns and 9 subgrids.
 	/// </summary>
 	/// <seealso cref="SudokuGridControl.SudokuCellData" />
+	[Serializable]
 	public class StandardCellData : SudokuCellData
 	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="StandardCellData"/> class.
+		/// We have to have a parameterless constructor for serialization.
+		/// </summary>
+		public StandardCellData()
+		{
+			Index = -1;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="StandardCellData"/> class.
+		/// </summary>
+		/// <param name="nIndex">Index of the n.</param>
 		public StandardCellData(int nIndex) : base()
 		{
-			CellIndex = nIndex;
+			Index = nIndex;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="StandardCellData"/> class.
+		/// </summary>
+		/// <param name="sdc">The SDC.</param>
+		public StandardCellData(StandardCellData sdc)
+		{
+			Index = sdc.Index;
+			Asgmt = sdc.Asgmt;
+			BrchOr = sdc.BrchOr;
+			SlvOr = sdc.SlvOr;
+			Stat = sdc.Stat;
 		}
 
 		/// <summary>
@@ -104,7 +164,7 @@ namespace SudokuGridControl
 		/// <value>The row.</value>
 		public int Row
 		{
-			get { return CellIndex / SudokuCell.Nine; }
+			get { return Index / SudokuCell.Nine; }
 		}
 
 		/// <summary>
@@ -113,7 +173,7 @@ namespace SudokuGridControl
 		/// <value>The column.</value>
 		public int Column 
 		{
-			get { return CellIndex % SudokuCell.Nine; }
+			get { return Index % SudokuCell.Nine; }
 		}
 
 		/// <summary>

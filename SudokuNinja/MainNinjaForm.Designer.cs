@@ -32,10 +32,11 @@
 			this.puzzlesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.setPuzzleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pnlSetting = new System.Windows.Forms.Panel();
-			this.sudokuStandardGrid = new SudokuGridControl.SudokuStandardGrid();
-			this.label1 = new System.Windows.Forms.Label();
-			this.txtPuzzleName = new System.Windows.Forms.TextBox();
 			this.btnSave = new System.Windows.Forms.Button();
+			this.label1 = new System.Windows.Forms.Label();
+			this.sudokuStandardGrid = new SudokuGridControl.SudokuStandardGrid();
+			this.label2 = new System.Windows.Forms.Label();
+			this.txtPuzzleNameIn = new System.Windows.Forms.TextBox();
 			this.menuStrip.SuspendLayout();
 			this.pnlSetting.SuspendLayout();
 			this.SuspendLayout();
@@ -71,13 +72,34 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.pnlSetting.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.pnlSetting.Controls.Add(this.txtPuzzleNameIn);
+			this.pnlSetting.Controls.Add(this.label2);
 			this.pnlSetting.Controls.Add(this.btnSave);
-			this.pnlSetting.Controls.Add(this.txtPuzzleName);
 			this.pnlSetting.Controls.Add(this.label1);
 			this.pnlSetting.Location = new System.Drawing.Point(420, 34);
 			this.pnlSetting.Name = "pnlSetting";
-			this.pnlSetting.Size = new System.Drawing.Size(222, 394);
+			this.pnlSetting.Size = new System.Drawing.Size(224, 394);
 			this.pnlSetting.TabIndex = 3;
+			// 
+			// btnSave
+			// 
+			this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.btnSave.Location = new System.Drawing.Point(161, 78);
+			this.btnSave.Name = "btnSave";
+			this.btnSave.Size = new System.Drawing.Size(53, 23);
+			this.btnSave.TabIndex = 2;
+			this.btnSave.Text = "Save";
+			this.btnSave.UseVisualStyleBackColor = true;
+			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(8, 35);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(124, 13);
+			this.label1.TabIndex = 0;
+			this.label1.Text = "Give the Puzzle a Name:";
 			// 
 			// sudokuStandardGrid
 			// 
@@ -93,34 +115,22 @@
 			this.sudokuStandardGrid.Size = new System.Drawing.Size(396, 396);
 			this.sudokuStandardGrid.TabIndex = 2;
 			// 
-			// label1
+			// label2
 			// 
-			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(3, 10);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(72, 13);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Puzzle Name:";
+			this.label2.AutoSize = true;
+			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label2.Location = new System.Drawing.Point(7, 4);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(133, 20);
+			this.label2.TabIndex = 3;
+			this.label2.Text = "Set a New Puzzle";
 			// 
-			// txtPuzzleName
+			// txtPuzzleNameIn
 			// 
-			this.txtPuzzleName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.txtPuzzleName.Location = new System.Drawing.Point(6, 26);
-			this.txtPuzzleName.Name = "txtPuzzleName";
-			this.txtPuzzleName.Size = new System.Drawing.Size(206, 20);
-			this.txtPuzzleName.TabIndex = 1;
-			// 
-			// btnSave
-			// 
-			this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.btnSave.Location = new System.Drawing.Point(159, 52);
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(53, 23);
-			this.btnSave.TabIndex = 2;
-			this.btnSave.Text = "Save";
-			this.btnSave.UseVisualStyleBackColor = true;
-			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+			this.txtPuzzleNameIn.Location = new System.Drawing.Point(11, 52);
+			this.txtPuzzleNameIn.Name = "txtPuzzleNameIn";
+			this.txtPuzzleNameIn.Size = new System.Drawing.Size(203, 20);
+			this.txtPuzzleNameIn.TabIndex = 4;
 			// 
 			// MainNinjaForm
 			// 
@@ -156,8 +166,9 @@
 		private SudokuGridControl.SudokuStandardGrid sudokuStandardGrid;
 		private System.Windows.Forms.Panel pnlSetting;
 		private System.Windows.Forms.Button btnSave;
-		private System.Windows.Forms.TextBox txtPuzzleName;
 		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.TextBox txtPuzzleNameIn;
 	}
 }
 
