@@ -44,9 +44,6 @@ namespace SudokuGridControl
 		int m_nCellSN;
 		bool[] m_blSubNumON;
 
-		// Will be assigned to the cell at initialization
-		SudokuCellData cellData;
-
 		SudokuStandardGrid.CellKeyEvent TellGridAboutKeyEvent;
 
 		/// <summary>
@@ -68,24 +65,6 @@ namespace SudokuGridControl
 		public void SetGridKeyHandler(SudokuStandardGrid.CellKeyEvent cke)
 		{
 			TellGridAboutKeyEvent = cke;
-		}
-
-		/// <summary>
-		/// Attachs the cell data.
-		/// </summary>
-		/// <param name="scd">The SCD.</param>
-		public void AttachCellData(SudokuCellData scd)
-		{
-			cellData = scd;
-		}
-
-		/// <summary>
-		/// Gets the cell data.
-		/// </summary>
-		/// <value>The cell data.</value>
-		public SudokuCellData CellData
-		{
-			get { return cellData; }
 		}
 
 		/// <summary>
@@ -116,14 +95,7 @@ namespace SudokuGridControl
 		System.ComponentModel.DefaultValue(0)]
 		public int MainSelection
 		{
-			get
-			{
-				return CellData.Asgmt;
-			}
-			set
-			{
-				CellData.Asgmt = value;
-			}
+			get; set;
 		}
 
 		/// <summary>

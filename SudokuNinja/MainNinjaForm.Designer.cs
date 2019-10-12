@@ -32,11 +32,12 @@
 			this.puzzlesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.setPuzzleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.pnlSetting = new System.Windows.Forms.Panel();
+			this.txtPuzzleNameIn = new System.Windows.Forms.TextBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.btnSave = new System.Windows.Forms.Button();
 			this.label1 = new System.Windows.Forms.Label();
 			this.sudokuStandardGrid = new SudokuGridControl.SudokuStandardGrid();
-			this.label2 = new System.Windows.Forms.Label();
-			this.txtPuzzleNameIn = new System.Windows.Forms.TextBox();
+			this.lblPuzzleSaved = new System.Windows.Forms.Label();
 			this.menuStrip.SuspendLayout();
 			this.pnlSetting.SuspendLayout();
 			this.SuspendLayout();
@@ -72,6 +73,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.pnlSetting.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.pnlSetting.Controls.Add(this.lblPuzzleSaved);
 			this.pnlSetting.Controls.Add(this.txtPuzzleNameIn);
 			this.pnlSetting.Controls.Add(this.label2);
 			this.pnlSetting.Controls.Add(this.btnSave);
@@ -80,6 +82,23 @@
 			this.pnlSetting.Name = "pnlSetting";
 			this.pnlSetting.Size = new System.Drawing.Size(224, 394);
 			this.pnlSetting.TabIndex = 3;
+			// 
+			// txtPuzzleNameIn
+			// 
+			this.txtPuzzleNameIn.Location = new System.Drawing.Point(11, 52);
+			this.txtPuzzleNameIn.Name = "txtPuzzleNameIn";
+			this.txtPuzzleNameIn.Size = new System.Drawing.Size(203, 20);
+			this.txtPuzzleNameIn.TabIndex = 4;
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label2.Location = new System.Drawing.Point(7, 4);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(133, 20);
+			this.label2.TabIndex = 3;
+			this.label2.Text = "Set a New Puzzle";
 			// 
 			// btnSave
 			// 
@@ -115,22 +134,13 @@
 			this.sudokuStandardGrid.Size = new System.Drawing.Size(396, 396);
 			this.sudokuStandardGrid.TabIndex = 2;
 			// 
-			// label2
+			// lblPuzzleSaved
 			// 
-			this.label2.AutoSize = true;
-			this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label2.Location = new System.Drawing.Point(7, 4);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(133, 20);
-			this.label2.TabIndex = 3;
-			this.label2.Text = "Set a New Puzzle";
-			// 
-			// txtPuzzleNameIn
-			// 
-			this.txtPuzzleNameIn.Location = new System.Drawing.Point(11, 52);
-			this.txtPuzzleNameIn.Name = "txtPuzzleNameIn";
-			this.txtPuzzleNameIn.Size = new System.Drawing.Size(203, 20);
-			this.txtPuzzleNameIn.TabIndex = 4;
+			this.lblPuzzleSaved.AutoSize = true;
+			this.lblPuzzleSaved.Location = new System.Drawing.Point(29, 83);
+			this.lblPuzzleSaved.Name = "lblPuzzleSaved";
+			this.lblPuzzleSaved.Size = new System.Drawing.Size(0, 13);
+			this.lblPuzzleSaved.TabIndex = 5;
 			// 
 			// MainNinjaForm
 			// 
@@ -169,6 +179,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.TextBox txtPuzzleNameIn;
+		private System.Windows.Forms.Label lblPuzzleSaved;
 	}
 }
 

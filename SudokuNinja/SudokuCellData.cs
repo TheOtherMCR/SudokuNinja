@@ -12,8 +12,9 @@ using System;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
+using SudokuGridControl;
 
-namespace SudokuGridControl
+namespace SudokuNinja
 {
 	public enum CellStatus
 	{
@@ -70,35 +71,35 @@ namespace SudokuGridControl
 		/// Gets or sets the index of the cell.
 		/// </summary>
 		/// <value>The index of the cell.</value>
-		[XmlElement]
+		[XmlAttribute]
 		public int Index
 		{
 			get { return m_nCellIndex; }
 			set { m_nCellIndex = value; }
 		}
 
-		[XmlElement]
+		[XmlAttribute]
 		public CellStatus Stat
 		{
 			get { return cellStatus; }
 			set { cellStatus = value; }
 		}
 
-		[XmlElement]
+		[XmlAttribute]
 		public int Asgmt
 		{
 			get { return m_nValue; }
 			set { m_nValue = value; }
 		}
 
-		[XmlElement]
+		[XmlAttribute]
 		public int SlvOr
 		{
 			get { return m_nSolvedOrder; }
 			set { m_nSolvedOrder = value; }
 		}
 
-		[XmlElement]
+		[XmlAttribute]
 		public int BrchOr
 		{
 			get { return m_nBranchOrder; }
@@ -133,7 +134,7 @@ namespace SudokuGridControl
 		/// </summary>
 		public StandardCellData()
 		{
-			Index = -1;
+			ResetCell(-1);
 		}
 
 		/// <summary>
@@ -142,7 +143,19 @@ namespace SudokuGridControl
 		/// <param name="nIndex">Index of the n.</param>
 		public StandardCellData(int nIndex) : base()
 		{
+			ResetCell(nIndex);
+		}
+
+		/// <summary>
+		/// Resets the cell. All except the index.
+		/// </summary>
+		public void ResetCell(int nIndex)
+		{
 			Index = nIndex;
+			Asgmt = 0;
+			BrchOr = -1;
+			SlvOr = -1;
+			Stat = CellStatus.CS_Unsolved;
 		}
 
 		/// <summary>
@@ -158,62 +171,5 @@ namespace SudokuGridControl
 			Stat = sdc.Stat;
 		}
 
-		/// <summary>
-		/// Gets the row number of the cell.
-		/// </summary>
-		/// <value>The row.</value>
-		public int Row
-		{
-			get { return Index / SudokuCell.Nine; }
-		}
-
-		/// <summary>
-		/// Gets the column number of the cell.
-		/// </summary>
-		/// <value>The column.</value>
-		public int Column 
-		{
-			get { return Index % SudokuCell.Nine; }
-		}
-
-		/// <summary>
-		/// Gets the cell subgrid.
-		/// </summary>
-		/// <param name="nFullIndex">Full index of the cell.</param>
-		/// <returns>System.Int32.</returns>
-		public int Subgrid
-		{
-			get
-			{
-				int sg;
-				sg = Column / 3;
-				sg += (Row / 3) * 3;
-				return sg;
-			}
-		}
-
-		/// <summary>
-		/// Gets the cell row number within it's subgrid.
-		/// </summary>
-		/// <value>The subgrid row.</value>
-		public int SubgridRow
-		{
-			get
-			{
-				return (Row % 3);
-			}
-		}
-
-		/// <summary>
-		/// Gets the cell Column number within it's subgrid.
-		/// </summary>
-		/// <value>The subgrid row.</value>
-		public int SubgridColumn
-		{
-			get
-			{
-				return (Column % 3);
-			}
-		}
 	}
 }

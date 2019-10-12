@@ -55,7 +55,6 @@
       <DependentUpon>SudokuCell.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SudokuCellData.cs" />
     <Compile Include="SudokuStandardGrid.cs">
       <SubType>UserControl</SubType>
     </Compile>

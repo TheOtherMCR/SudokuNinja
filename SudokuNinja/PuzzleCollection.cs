@@ -24,7 +24,6 @@ namespace SudokuNinja
 	[Serializable]
 	public class PuzzleCollection
 	{
-		[DataMember]
 		public List<SavedPuzzle> PuzzleList;
 
 		public PuzzleCollection()
@@ -40,11 +39,29 @@ namespace SudokuNinja
 	[Serializable]
 	public class SavedPuzzle
 	{
-		public StandardCellData[] Cell;
+		protected StandardCellData[] cellData;
 		protected string m_strPuzzleName;
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SavedPuzzle"/> class.
+		/// </summary>
 		public SavedPuzzle()
 		{
+			int i;
+			cellData = new StandardCellData[SudokuCell.NineByNine];
+			for (i = 0; i < SudokuCell.NineByNine; i++)
+				cellData[i] = new StandardCellData(i);
+		}
+
+		/// <summary>
+		/// Gets or sets the cell data.
+		/// </summary>
+		/// <value>The cell data.</value>
+		[XmlArray("CellsInPuzzle")]
+		public StandardCellData[] CellData
+		{
+			get { return cellData; }
+			set { cellData = value; }
 		}
 
 		/// <summary>
@@ -62,6 +79,7 @@ namespace SudokuNinja
 		/// Gets or sets the created.
 		/// </summary>
 		/// <value>The created.</value>
+		[XmlAttribute]
 		public DateTime Created
 		{
 			get; set;
@@ -70,7 +88,8 @@ namespace SudokuNinja
 		/// <summary>
 		/// Gets or sets the modified.
 		/// </summary>
-		/// <value>The modified.</value>
+		/// <value>The modified date.</value>
+		[XmlAttribute]
 		public DateTime Modified
 		{
 			get; set;

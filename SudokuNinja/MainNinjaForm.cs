@@ -48,6 +48,8 @@ namespace SudokuNinja
 		{
 			SavedPuzzles.CreateIfNoFile_ElseRead();
 			m_PC = SavedPuzzles.ToPersist;
+
+			pnlSetting.Visible = false;
 		}
 
 		/// <summary>
@@ -78,6 +80,13 @@ namespace SudokuNinja
 		private void setPuzzleToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			sudokuStandardGrid.SetGridMode(GridMode.GM_SetPuzzle);
+
+			pnlSetting.Visible = true;
+			lblPuzzleSaved.Text = "";
+			btnSave.Enabled = true;
+			txtPuzzleNameIn.Text = "";
+			txtPuzzleNameIn.Enabled = true;
+			txtPuzzleNameIn.Focus();
 		}
 
 		/// <summary>
@@ -87,16 +96,45 @@ namespace SudokuNinja
 		/// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
 		private void btnSave_Click(object sender, EventArgs e)
 		{
+			if (txtPuzzleNameIn.Text.Length == 0)
+			{
+				lblPuzzleSaved.Text = "NEEDS A NAME";
+				return;
+			}
+
 			SavedPuzzle sp;
 			ReadCurrentGrid(out sp);
 			m_PC.PuzzleList.Add(sp);
+
+			lblPuzzleSaved.Text = "PUZZLE SAVED";
+			btnSave.Enabled = false;
+			txtPuzzleNameIn.Enabled = false;
+			sudokuStandardGrid.SetGridMode(GridMode.GM_Idle);
 		}
 
+		/// <summary>
+		/// Reads the current grid.
+		/// Sets the puzzle for storage.
+		/// </summary>
+		/// <param name="spOut">The sp out.</param>
 		void ReadCurrentGrid(out SavedPuzzle spOut)
 		{
+			int i;
+			StandardCellData ssd;
 			spOut = new SavedPuzzle();
-
-			sudokuStandardGrid.CopyAllCellData(out spOut.Cell);
+			for (i = 0; i < SudokuCell.NineByNine; i++)
+			{
+				ssd = spOut.CellData[i];
+				ssd.Index = i;
+				ssd.Asgmt = sudokuStandardGrid.GetValue(i);
+				if (ssd.Asgmt == 0)
+					ssd.Stat = CellStatus.CS_Unsolved;
+				else
+					ssd.Stat = CellStatus.CS_Fixed;
+			}
+			spOut.PuzzleName = txtPuzzleNameIn.Text;
+			spOut.Created = DateTime.Now;
+			spOut.Modified = spOut.Created;
 		}
 
 		private void btnLoad_Click(object sender, EventArgs e)
@@ -105,10 +143,9 @@ namespace SudokuNinja
 		}
 
 		/// <summary>
-		/// Loads the JSON file containing all of the power characteristic settings for the
-		/// all of the tags.
+		/// Loads the XML file containing all of the puzzles that we have saved.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>true if a file was found.</returns>
 		public bool LoadPuzzleFile(out PuzzleCollection pc)
 		{
 			pc = null;
@@ -118,6 +155,7 @@ namespace SudokuNinja
 			}
 			else
 			{
+				SavedPuzzles.CreateIfNoFile_ElseRead();
 				return true;
 			}
 		}

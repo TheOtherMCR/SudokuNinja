@@ -79,7 +79,6 @@ namespace SudokuGridControl
 
 		Panel[] subgridPanel = new Panel[SudokuCell.Nine];
 		SudokuCell[] sudCell = new SudokuCell[SudokuCell.NineByNine];
-		StandardCellData[] m_cellData = new StandardCellData[SudokuCell.NineByNine];
 		PopupNumberPanel m_popup;
 
 		int m_nSubgridHeight;
@@ -139,13 +138,11 @@ namespace SudokuGridControl
 					sudCell[k].SetGridKeyHandler(CallMeOnKey);
 				}
 			}
+
 			// Now assign all of the cells to their subgrids:
 			for (i = 0; i < c_nNumCellsTotal; i++)
 			{
-				// Initialize the cell data and attached it to the cell:
-				m_cellData[i] = new StandardCellData(i);
-				sudCell[i].AttachCellData(m_cellData[i]);
-				j = m_cellData[i].Subgrid;
+				j = SudokuStandardGrid.Subgrid(i);
 				subgridPanel[j].Controls.Add(sudCell[i]);
 			}
 
@@ -153,16 +150,6 @@ namespace SudokuGridControl
 			m_nSelectedCell = -1;
 			m_popup = new PopupNumberPanel();
 			m_popup.StartPosition = FormStartPosition.Manual;
-		}
-
-		public void CopyAllCellData(out StandardCellData[] sdc)
-		{
-			int i;
-			sdc = new StandardCellData[SudokuCell.NineByNine];
-			for (i = 0; i < SudokuCell.NineByNine; i++)
-			{
-				sdc[i] = new StandardCellData(m_cellData[i]);
-			}
 		}
 
 		#region Color Sets
@@ -314,15 +301,13 @@ namespace SudokuGridControl
 		private void PlaceCell(int nCellIndex)
 		{
 			SudokuCell sc;
-			StandardCellData scd;
 			int nX, nY;
 			sc = sudCell[nCellIndex];
-			scd = sc.CellData as StandardCellData;
 			sc.Size = new Size(m_nCellWidth, m_nCellHeight);
 			sc.SetCellMetrics(ref m_SelectionFont, ref m_BoldFont, ref m_SubNumFont, 
 								ref m_CellRect, c_dMainNumberVerticalPositionPercent);
-			nX = scd.SubgridColumn * (c_nInnerCellSpacing + m_nCellWidth);
-			nY = scd.SubgridRow * (c_nInnerCellSpacing + m_nCellHeight);
+			nX = SubgridColumn(nCellIndex) * (c_nInnerCellSpacing + m_nCellWidth);
+			nY = SubgridRow(nCellIndex) * (c_nInnerCellSpacing + m_nCellHeight);
 			sc.Location = new Point(nX, nY);
 		}
 
@@ -413,6 +398,17 @@ namespace SudokuGridControl
 					break;
 			}
 		}
+
+		/// <summary>
+		/// Gets the value.
+		/// </summary>
+		/// <param name="nCellIndex">Index of the n cell.</param>
+		/// <returns>System.Int32.</returns>
+		public int GetValue(int nCellIndex)
+		{
+			SudokuCell sc = sudCell[nCellIndex];
+			return sc.MainSelection;
+		}
 		#endregion
 
 		#region Keyboard Control
@@ -494,8 +490,63 @@ namespace SudokuGridControl
 				sudCell[nCellNum].Invalidate();
 			}
 		}
-
 		#endregion
 
+		#region Static Functions
+
+		/// <summary>
+		/// Gets the row number of the cell.
+		/// </summary>
+		/// <value>The row.</value>
+		static public int Row(int Index)
+		{
+			return Index / SudokuCell.Nine;
+		}
+
+		/// <summary>
+		/// Gets the column number of the cell.
+		/// </summary>
+		/// <value>The column.</value>
+		static public int Column(int Index)
+		{
+			return Index % SudokuCell.Nine;
+		}
+
+		/// <summary>
+		/// Gets the cell subgrid.
+		/// </summary>
+		/// <param name="nFullIndex">Full index of the cell.</param>
+		/// <returns>System.Int32.</returns>
+		static public int Subgrid(int FullIndex)
+		{
+			int sg, col, row;
+			col = Column(FullIndex);
+			row = Row(FullIndex);
+			sg = col / 3;
+			sg += (row / 3) * 3;
+			return sg;
+		}
+
+		/// <summary>
+		/// Gets the cell row number within it's subgrid.
+		/// </summary>
+		/// <value>The subgrid row.</value>
+		static public int SubgridRow(int Index)
+		{
+			int row = Row(Index);
+			return (row % 3);
+		}
+
+		/// <summary>
+		/// Gets the cell Column number within it's subgrid.
+		/// </summary>
+		/// <value>The subgrid column.</value>
+		static public int SubgridColumn(int Index)
+		{
+			int col = Column(Index);
+			return (col % 3);
+		}
+
+		#endregion
 	}
 }
